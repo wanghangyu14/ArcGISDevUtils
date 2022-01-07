@@ -109,11 +109,19 @@ class MapScale @JvmOverloads constructor(
 
     private fun calculateWidth() {
         when (scale) {
-            in 1..20 -> {
-                text = "20米"
-                scaleWidth = (20 * ppcm / scale).toInt() //264为ppi，264/2.54为1厘米的像素数
+            in 1..5 ->{
+                text = "5米"
+                scaleWidth = (5 * ppcm / scale).toInt()
             }
-            in 21..50 -> {
+            in 6..10->{
+                text = "10米"
+                scaleWidth = (10 * ppcm / scale).toInt()
+            }
+            in 10..25 -> {
+                text = "20米"
+                scaleWidth = (25 * ppcm / scale).toInt() //264为ppi，264/2.54为1厘米的像素数
+            }
+            in 26..50 -> {
                 text = "50米"
                 scaleWidth = (50 * ppcm / scale).toInt()
             }
