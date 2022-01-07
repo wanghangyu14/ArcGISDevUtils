@@ -7,13 +7,26 @@
     tools:context=".MainActivity">
 
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+<!--    <ProgressBar-->
+<!--        android:id="@+id/progressBar"-->
+<!--        style="?android:attr/progressBarStyleHorizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+    <com.esri.arcgisruntime.mapping.view.MapView
+        android:id="@+id/mapview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"/>
+    <com.why.util.widget.MapScale
+        android:id="@+id/scale"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:font_size="8dp"
+        app:scale="1500"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
