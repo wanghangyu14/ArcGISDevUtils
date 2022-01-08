@@ -41,4 +41,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
+    implementation 'io.github.razerdp:BasePopup:3.2.0'
+    api 'com.esri.arcgisruntime:arcgis-android:100.12.0'
 }
