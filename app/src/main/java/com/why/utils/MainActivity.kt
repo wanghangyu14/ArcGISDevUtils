@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         btn.setOnClickListener {
             m.show()
         }
+        mc.bindMapView(mapview)
 
 //        val fd = FileDownloader(this)
 //        lifecycleScope.launch {

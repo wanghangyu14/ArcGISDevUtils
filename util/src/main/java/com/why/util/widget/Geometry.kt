@@ -2,7 +2,7 @@ package com.why.util.widget
 
 import com.esri.arcgisruntime.geometry.*
 
-fun calculateLength(list: List<Point>, unit: LenUnit) = when (unit) {
+internal fun calculateLength(list: List<Point>, unit: LenUnit) = when (unit) {
     Meter -> GeometryEngine.lengthGeodetic(
         Polyline(PointCollection(list)),
         LinearUnit(LinearUnitId.METERS),
@@ -21,7 +21,7 @@ fun calculateLength(list: List<Point>, unit: LenUnit) = when (unit) {
 }
 
 
-fun calculateArea(list: List<Point>, unit: SquareUnit) = when (unit) {
+internal fun calculateArea(list: List<Point>, unit: SquareUnit) = when (unit) {
     SquareMeter -> GeometryEngine.areaGeodetic(
         Polygon(PointCollection(list)),
         AreaUnit(AreaUnitId.SQUARE_METERS),

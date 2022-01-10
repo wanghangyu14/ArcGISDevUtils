@@ -15,4 +15,8 @@
             <enum name="bottom" value="1"/>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="MapController">
+        <attr name="hasZoom" format="boolean"/>
+    </declare-styleable>
 </resources>

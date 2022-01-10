@@ -1,17 +1,17 @@
 package com.why.util.widget
 
-sealed class LenUnit
+internal sealed class LenUnit
 
-sealed class SquareUnit
+internal sealed class SquareUnit
 
-object Meter : LenUnit()
+internal object Meter : LenUnit()
 
-object KiloMeter : LenUnit()
+internal object KiloMeter : LenUnit()
 
-object Li : LenUnit()
+internal object Li : LenUnit()
 
-object SquareMeter : SquareUnit()
+internal object SquareMeter : SquareUnit()
 
-object SquareKiloMeter : SquareUnit()
+internal object SquareKiloMeter : SquareUnit()
 
-object Mu : SquareUnit()
+internal object Mu : SquareUnit()

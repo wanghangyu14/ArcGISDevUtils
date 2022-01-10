@@ -284,6 +284,7 @@ class MeasureToolbox @JvmOverloads constructor(
 
     @SuppressLint("InflateParams")
     fun show() {
+        if(isVisible) return
         mMapView?.let { mapview ->
             initView()
             initListener()
@@ -350,6 +351,7 @@ class MeasureToolbox @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun hide() {
+        if(!isVisible) return
         if(mode==0){
             mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
         }
