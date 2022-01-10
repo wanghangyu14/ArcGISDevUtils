@@ -15,6 +15,6 @@ Step 2. Add the dependency
 
 ```groovy
 dependencies {
-    implementation 'com.github.wanghangyu14:UtilsX:0.1.2'
+    implementation 'com.github.wanghangyu14:ArcGISforAndroidUtils:latest-version'
 }
 ```
