@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/closeMeasure"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:scaleType="center"
         android:src="@drawable/ic_close_deep_blue" />
 
@@ -27,8 +27,8 @@
 
     <TextView
         android:id="@+id/measureUnit"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
@@ -38,26 +38,38 @@
 
     <ImageView
         android:id="@+id/undo"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/dismiss" />
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="center"
+        android:src="@drawable/undo" />
+
+    <ImageView
+        android:id="@+id/redo"
+        android:scaleType="center"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/redo"/>
 
     <ImageView
         android:id="@+id/addPoint"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:scaleType="center"
-        android:src="@drawable/plus_circle_fill" />
+        android:src="@drawable/plus_circle_fill"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/trashMeasure"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/trash_can" />
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="center"
+        android:src="@drawable/trashcan" />
 
     <ImageView
         android:id="@+id/lengthAndArea"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="centerCrop"
+        android:padding="4dp"
         android:src="@drawable/length_selected" />
 </LinearLayout>

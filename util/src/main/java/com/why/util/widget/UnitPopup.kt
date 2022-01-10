@@ -9,7 +9,7 @@ import razerdp.basepopup.BasePopupWindow
 import razerdp.util.animation.AnimationHelper
 import razerdp.util.animation.TranslationConfig
 
-class UnitPopup(
+internal class UnitPopup(
     private val isLen: Boolean,
     private val isBottom: Boolean,
     context: Context,

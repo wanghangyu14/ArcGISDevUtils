@@ -8,6 +8,7 @@ import android.graphics.PixelFormat
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.WindowManager
 import android.widget.ImageView
@@ -28,6 +29,7 @@ import com.why.util.R
 import com.why.util.dp2px
 import kotlinx.android.synthetic.main.measure_toolbox.view.*
 import razerdp.basepopup.BasePopupWindow
+import kotlin.math.roundToInt
 
 class MeasureToolbox @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -38,12 +40,14 @@ class MeasureToolbox @JvmOverloads constructor(
     private val graphicOverlay = GraphicsOverlay()
     private var isLen = true
     private val points = mutableListOf<Point>()
+    private val temp = mutableListOf<Point>()
     private val dotSymbol = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 8F)
     private val lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.BLACK, 2F)
     private val fillSymbol = SimpleFillSymbol(
         SimpleFillSymbol.Style.SOLID, Color.argb(50, 0, 255, 0),
         lineSymbol
     )
+    private val imageView = ImageView(context)
 
 
     init {
@@ -52,13 +56,14 @@ class MeasureToolbox @JvmOverloads constructor(
         mode = typedArray.getInt(R.styleable.MeasureToolbox_mode, 0)
         spinnerPosition = typedArray.getInt(R.styleable.MeasureToolbox_spinner_position, 0)
         typedArray.recycle()
+        isVisible = false
     }
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     private fun initListener() {
         closeMeasure.setOnClickListener {
-            onHide()
+            hide()
         }
 
         measureUnit.setOnClickListener {
@@ -102,76 +107,100 @@ class MeasureToolbox @JvmOverloads constructor(
             popup.showPopupWindow(measureUnit)
         }
 
-        addPoint.setOnClickListener {
-            mMapView?.let { mapview ->
-                val point = mapview.screenToLocation(
-                    android.graphics.Point(
-                        mapview.width / 2 + mapview.left,
-                        mapview.height / 2 + mapview.top
+        if(mode==0){
+            mMapView?.onTouchListener = object : DefaultMapViewOnTouchListener(context, mMapView) {
+                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                    val point = mMapView.screenToLocation(
+                        android.graphics.Point(
+                            e.x.roundToInt(),
+                            e.y.roundToInt()
+                        )
                     )
-                )
-                points.add(point)
-                graphicOverlay.graphics.add(Graphic(point, dotSymbol))
-                if (isLen) {
-                    if (points.size > 1) {
+                    points.add(point)
+                    graphicOverlay.graphics.add(Graphic(point, dotSymbol))
+                    if (isLen) {
+                        if (points.size > 1) {
+                            graphicOverlay.graphics.add(
+                                Graphic(
+                                    Polyline(PointCollection(points)),
+                                    lineSymbol
+                                )
+                            )
+                            measureResult.text = len()
+                        }
+                    } else {
+                        graphicOverlay.graphics.clear()
+                        points.forEach {
+                            graphicOverlay.graphics.add(Graphic(it, dotSymbol))
+                        }
                         graphicOverlay.graphics.add(
                             Graphic(
-                                Polyline(PointCollection(points)),
-                                lineSymbol
+                                Polygon(PointCollection(points)),
+                                fillSymbol
                             )
                         )
-                        measureResult.text = len()
+                        measureResult.text = area()
                     }
-                } else {
-                    graphicOverlay.graphics.clear()
-                    points.forEach {
-                        graphicOverlay.graphics.add(Graphic(it, dotSymbol))
-                    }
-                    graphicOverlay.graphics.add(
-                        Graphic(
-                            Polygon(PointCollection(points)),
-                            fillSymbol
+                    return super.onSingleTapConfirmed(e)
+                }
+            }
+        }else{
+            addPoint.setOnClickListener {
+                mMapView?.let { mapview ->
+                    val point = mapview.screenToLocation(
+                        android.graphics.Point(
+                            mapview.width/2,
+                            mapview.height/2
                         )
                     )
-                    measureResult.text = area()
+                    points.add(point)
+                    graphicOverlay.graphics.add(Graphic(point, dotSymbol))
+                    if (isLen) {
+                        if (points.size > 1) {
+                            graphicOverlay.graphics.add(
+                                Graphic(
+                                    Polyline(PointCollection(points)),
+                                    lineSymbol
+                                )
+                            )
+                            measureResult.text = len()
+                        }
+                    } else {
+                        graphicOverlay.graphics.clear()
+                        points.forEach {
+                            graphicOverlay.graphics.add(Graphic(it, dotSymbol))
+                        }
+                        graphicOverlay.graphics.add(
+                            Graphic(
+                                Polygon(PointCollection(points)),
+                                fillSymbol
+                            )
+                        )
+                        measureResult.text = area()
+                    }
                 }
             }
         }
 
+
         undo.setOnClickListener {
-            graphicOverlay.graphics.clear()
             if (points.isNotEmpty()) {
-                points.removeAt(points.size - 1)
-                points.forEach {
-                    graphicOverlay.graphics.add(Graphic(it, dotSymbol))
-                }
+                temp.add(points.removeAt(points.size - 1))
+                refresh()
             }
-            if (points.size > 1) {
-                if (isLen) {
-                    graphicOverlay.graphics.add(
-                        Graphic(
-                            Polyline(PointCollection(points)),
-                            lineSymbol
-                        )
-                    )
-                    measureResult.text = len()
-                } else {
-                    graphicOverlay.graphics.add(
-                        Graphic(
-                            Polygon(PointCollection(points)),
-                            fillSymbol
-                        )
-                    )
-                    measureResult.text = area()
-                }
-            } else {
-                measureResult.text = "0"
+        }
+
+        redo.setOnClickListener {
+            if(temp.isNotEmpty()){
+                points.add(temp.removeAt(temp.size-1))
+                refresh()
             }
         }
 
         trashMeasure.setOnClickListener {
             graphicOverlay.graphics.clear()
             points.clear()
+            temp.clear()
             measureResult.text = "0"
         }
 
@@ -248,46 +277,93 @@ class MeasureToolbox @JvmOverloads constructor(
         }
     }
 
-    fun bindMapView(mapView: MapView) {
+    fun bindMapView(mapView: MapView):MeasureToolbox {
         mMapView = mapView
-        mMapView?.graphicsOverlays?.add(graphicOverlay)
+        return this
     }
 
     @SuppressLint("InflateParams")
     fun show() {
         mMapView?.let { mapview ->
+            initView()
             initListener()
-            mapview.post {
-                val imageView = ImageView(context)
-                imageView.scaleType = ImageView.ScaleType.CENTER
-                imageView.setImageResource(R.drawable.ic_front_sight)
-                val params = WindowManager.LayoutParams()
-                params.apply {
-                    gravity = Gravity.TOP or Gravity.LEFT
-                    width = WRAP_CONTENT
-                    height = WRAP_CONTENT
-                    x = mapview.x.toInt() + (mapview.width - 21.dp2px(context)) / 2
-                    y = mapview.y.toInt() + (mapview.height - 21.dp2px(context)) / 2
-                    format = PixelFormat.RGBA_8888
-                    flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    type = WindowManager.LayoutParams.TYPE_APPLICATION
+            if(mode!=0){
+                mapview.post {
+                    imageView.scaleType = ImageView.ScaleType.CENTER
+                    imageView.setImageResource(R.drawable.ic_front_sight)
+                    val params = WindowManager.LayoutParams()
+                    val location = IntArray(2)
+                    val statusBarId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+                    val statusBarHeight = context.resources.getDimensionPixelSize(statusBarId)
+                    mapview.getLocationInWindow(location)
+                    params.apply {
+                        gravity = Gravity.TOP or Gravity.LEFT
+                        width = WRAP_CONTENT
+                        height = WRAP_CONTENT
+                        x = location[0] + (mapview.width - 21.dp2px(context)) / 2
+                        y = location[1] + (mapview.height - 21.dp2px(context)) / 2 - statusBarHeight
+                        format = PixelFormat.RGBA_8888
+                        flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        type = WindowManager.LayoutParams.TYPE_APPLICATION
+                    }
+                    val windowManager = (context as Activity).windowManager
+                    windowManager.addView(imageView, params)
                 }
-                val windowManager = (context as Activity).windowManager
-                windowManager.addView(imageView, params)
             }
+            isVisible = true
+            mapview.graphicsOverlays.add(graphicOverlay)
         }
     }
 
-    fun hide() {
-        onHide()
+    private fun initView() {
+        addPoint.isVisible = mode != 0
     }
 
+    private fun refresh(){
+        graphicOverlay.graphics.clear()
+        if (points.size > 1) {
+            points.forEach {
+                graphicOverlay.graphics.add(Graphic(it, dotSymbol))
+            }
+            if (isLen) {
+                graphicOverlay.graphics.add(
+                    Graphic(
+                        Polyline(PointCollection(points)),
+                        lineSymbol
+                    )
+                )
+                measureResult.text = len()
+            } else {
+                graphicOverlay.graphics.add(
+                    Graphic(
+                        Polygon(PointCollection(points)),
+                        fillSymbol
+                    )
+                )
+                measureResult.text = area()
+            }
+        } else {
+            measureResult.text = "0"
+        }
+    }
+
+
     @SuppressLint("ClickableViewAccessibility")
-    private fun onHide() {
-        mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
-        this.isVisible = false
+    private fun hide() {
+        if(mode==0){
+            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+        }
+        isVisible = false
         graphicOverlay.graphics.clear()
         mMapView?.graphicsOverlays?.remove(graphicOverlay)
+        measureResult.text = "0"
+        measureUnit.text = "m"
+        isLen = true
+        lengthAndArea.setImageResource(R.drawable.length_selected)
         points.clear()
+        temp.clear()
+        if(mode==1){
+            (context as Activity).windowManager.removeView(imageView)
+        }
     }
 }

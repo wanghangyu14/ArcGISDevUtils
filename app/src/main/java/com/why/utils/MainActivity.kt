@@ -28,12 +28,15 @@ class MainActivity : AppCompatActivity() {
             }
             .request { _, _, _ -> }
         val digitalMapLayer =
-            ArcGISTiledLayer("http://58.216.48.11:6080/arcgis/rest/services/CZ_Vector/MapServer")
+            ArcGISTiledLayer("http://218.2.231.245/historyraster/rest/services/historyVector/js_sldt_grey/MapServer")
         val map = ArcGISMap()
         map.basemap.baseLayers.add(digitalMapLayer)
         mapview.map = map
         m.bindMapView(mapview)
-        m.show()
+        btn.setOnClickListener {
+            m.show()
+        }
+
 //        val fd = FileDownloader(this)
 //        lifecycleScope.launch {
 //            fd.download(
