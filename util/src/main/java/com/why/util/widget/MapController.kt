@@ -22,7 +22,7 @@ class MapController @JvmOverloads constructor(
         zoom.isVisible = hasZoom
     }
 
-    fun bindMapView(mapView: MapView) {
+    fun bind(mapView: MapView) {
 
         relocation.setOnClickListener {
             val locationDisplay = mapView.locationDisplay

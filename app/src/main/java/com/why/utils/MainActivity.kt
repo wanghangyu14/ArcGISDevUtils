@@ -1,22 +1,11 @@
 package com.why.utils
 
 import android.Manifest
-import android.app.Activity
-import android.graphics.PixelFormat
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.WindowManager
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.esri.arcgisruntime.layers.ArcGISTiledLayer
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.permissionx.guolindev.PermissionX
-import com.why.util.Point
-import com.why.util.navigateWithBD
-import com.why.util.navigateWithTX
-import com.why.util.widget.NavigateDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -37,13 +26,15 @@ class MainActivity : AppCompatActivity() {
         val map = ArcGISMap()
         map.basemap.baseLayers.add(digitalMapLayer)
         mapview.map = map
-        m.bindMapView(mapview)
+        measure.bind(mapview)
         btn.setOnClickListener {
-            NavigateDialog(this)
-                .setDestination(Point(31.818121, 119.970584))
-                .show()
+            if(!measure.isBind()){
+                measure.bind(mapview)
+            }else{
+                measure.unbind()
+            }
         }
-        mc.bindMapView(mapview)
+        mc.bind(mapview)
 
 //        val fd = FileDownloader(this)
 //        lifecycleScope.launch {

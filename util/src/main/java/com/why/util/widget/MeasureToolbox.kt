@@ -56,14 +56,16 @@ class MeasureToolbox @JvmOverloads constructor(
         mode = typedArray.getInt(R.styleable.MeasureToolbox_mode, 0)
         spinnerPosition = typedArray.getInt(R.styleable.MeasureToolbox_spinner_position, 0)
         typedArray.recycle()
-        isVisible = false
+        initView()
     }
 
 
     @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     private fun initListener() {
         closeMeasure.setOnClickListener {
-            hide()
+            if (mMapView != null) {
+                unbind()
+            }
         }
 
         measureUnit.setOnClickListener {
@@ -107,7 +109,7 @@ class MeasureToolbox @JvmOverloads constructor(
             popup.showPopupWindow(measureUnit)
         }
 
-        if(mode==0){
+        if (mode == 0) {
             mMapView?.onTouchListener = object : DefaultMapViewOnTouchListener(context, mMapView) {
                 override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                     val point = mMapView.screenToLocation(
@@ -144,13 +146,13 @@ class MeasureToolbox @JvmOverloads constructor(
                     return super.onSingleTapConfirmed(e)
                 }
             }
-        }else{
+        } else {
             addPoint.setOnClickListener {
                 mMapView?.let { mapview ->
                     val point = mapview.screenToLocation(
                         android.graphics.Point(
-                            mapview.width/2,
-                            mapview.height/2
+                            mapview.width / 2,
+                            mapview.height / 2
                         )
                     )
                     points.add(point)
@@ -191,8 +193,8 @@ class MeasureToolbox @JvmOverloads constructor(
         }
 
         redo.setOnClickListener {
-            if(temp.isNotEmpty()){
-                points.add(temp.removeAt(temp.size-1))
+            if (temp.isNotEmpty()) {
+                points.add(temp.removeAt(temp.size - 1))
                 refresh()
             }
         }
@@ -277,24 +279,15 @@ class MeasureToolbox @JvmOverloads constructor(
         }
     }
 
-    fun bindMapView(mapView: MapView):MeasureToolbox {
+    fun bind(mapView: MapView) {
         mMapView = mapView
-        return this
-    }
-
-    @SuppressLint("InflateParams")
-    fun show() {
-        if(isVisible) return
         mMapView?.let { mapview ->
-            initView()
-            initListener()
-            if(mode!=0){
+            if (mode != 0) {
                 mapview.post {
-                    imageView.scaleType = ImageView.ScaleType.CENTER
-                    imageView.setImageResource(R.drawable.ic_front_sight)
                     val params = WindowManager.LayoutParams()
                     val location = IntArray(2)
-                    val statusBarId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+                    val statusBarId =
+                        context.resources.getIdentifier("status_bar_height", "dimen", "android")
                     val statusBarHeight = context.resources.getDimensionPixelSize(statusBarId)
                     mapview.getLocationInWindow(location)
                     params.apply {
@@ -311,16 +304,19 @@ class MeasureToolbox @JvmOverloads constructor(
                     windowManager.addView(imageView, params)
                 }
             }
-            isVisible = true
-            mapview.graphicsOverlays.add(graphicOverlay)
         }
+        initListener()
+        mMapView?.graphicsOverlays?.add(graphicOverlay)
     }
+
 
     private fun initView() {
         addPoint.isVisible = mode != 0
+        imageView.scaleType = ImageView.ScaleType.CENTER
+        imageView.setImageResource(R.drawable.ic_front_sight)
     }
 
-    private fun refresh(){
+    private fun refresh() {
         graphicOverlay.graphics.clear()
         if (points.size > 1) {
             points.forEach {
@@ -350,22 +346,24 @@ class MeasureToolbox @JvmOverloads constructor(
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun hide() {
-        if(!isVisible) return
-        if(mode==0){
+    fun unbind() {
+        if (mode == 0) {
             mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
         }
-        isVisible = false
         graphicOverlay.graphics.clear()
-        mMapView?.graphicsOverlays?.remove(graphicOverlay)
+        mMapView?.graphicsOverlays?.clear()
         measureResult.text = "0"
         measureUnit.text = "m"
         isLen = true
         lengthAndArea.setImageResource(R.drawable.length_selected)
         points.clear()
         temp.clear()
-        if(mode==1){
+        if (mode == 1) {
             (context as Activity).windowManager.removeView(imageView)
         }
+        mMapView = null
     }
+
+    fun isBind() = mMapView != null
+
 }

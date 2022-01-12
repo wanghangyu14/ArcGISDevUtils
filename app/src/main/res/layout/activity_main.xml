@@ -23,11 +23,12 @@
 
 
     <com.why.util.widget.MeasureToolbox
-        android:id="@+id/m"
+        android:id="@+id/measure"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:spinner_position="bottom"
-        app:mode="normal"/>
+        app:spinner_position="top"
+        android:layout_gravity="bottom"
+        app:mode="precise"/>
 
     <Button
         android:id="@+id/btn"
@@ -40,6 +41,8 @@
         android:id="@+id/mc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="80dp"
         android:layout_gravity="bottom"/>
 
 </FrameLayout>
