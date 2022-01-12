@@ -22,13 +22,18 @@
         android:layout_height="match_parent"/>
 
 
-    <com.why.util.widget.MeasureToolbox
-        android:id="@+id/measure"
+<!--    <com.why.util.widget.MeasureToolbox-->
+<!--        android:id="@+id/measure"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:spinner_position="top"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        app:mode="precise"/>-->
+
+    <com.why.util.widget.BufferQueryToolbox
+        android:id="@+id/bufferQueryToolbox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:spinner_position="top"
-        android:layout_gravity="bottom"
-        app:mode="precise"/>
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/btn"

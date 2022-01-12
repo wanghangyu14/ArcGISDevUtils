@@ -3,9 +3,12 @@ package com.why.utils
 import android.Manifest
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.esri.arcgisruntime.data.ServiceFeatureTable
 import com.esri.arcgisruntime.layers.ArcGISTiledLayer
+import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.permissionx.guolindev.PermissionX
+import com.why.util.showToast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -23,16 +26,23 @@ class MainActivity : AppCompatActivity() {
             .request { _, _, _ -> }
         val digitalMapLayer =
             ArcGISTiledLayer("http://218.2.231.245/historyraster/rest/services/historyVector/js_sldt_grey/MapServer")
+
+        val f = FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/27"))
+
         val map = ArcGISMap()
+        map.operationalLayers.add(f)
         map.basemap.baseLayers.add(digitalMapLayer)
         mapview.map = map
-        measure.bind(mapview)
+//        measure.bind(mapview)
         btn.setOnClickListener {
-            if(!measure.isBind()){
-                measure.bind(mapview)
+            if(!bufferQueryToolbox.isBind()){
+                bufferQueryToolbox.bind(mapview)
             }else{
-                measure.unbind()
+                bufferQueryToolbox.unbind()
             }
+        }
+        bufferQueryToolbox.setOnQueryResultListener { list ->
+            list.toString().showToast(this)
         }
         mc.bind(mapview)
 

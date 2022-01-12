@@ -63,9 +63,7 @@ class MeasureToolbox @JvmOverloads constructor(
     @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     private fun initListener() {
         closeMeasure.setOnClickListener {
-            if (mMapView != null) {
-                unbind()
-            }
+            unbind()
         }
 
         measureUnit.setOnClickListener {
