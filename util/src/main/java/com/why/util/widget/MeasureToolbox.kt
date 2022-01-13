@@ -54,7 +54,7 @@ class MeasureToolbox @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.measure_toolbox, this, true)
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MeasureToolbox)
         mode = typedArray.getInt(R.styleable.MeasureToolbox_mode, 0)
-        spinnerPosition = typedArray.getInt(R.styleable.MeasureToolbox_spinner_position, 0)
+        spinnerPosition = typedArray.getInt(R.styleable.MeasureToolbox_measure_spinner_position, 0)
         typedArray.recycle()
         initView()
     }

@@ -2,21 +2,29 @@
 <resources>
     <declare-styleable name="MapScale">
         <attr name="font_size" format="dimension" />
-        <attr name="scale" format="integer"/>
+        <attr name="scale" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="MeasureToolbox">
         <attr name="mode" format="enum">
-            <enum name="normal" value="0"/>
-            <enum name="precise" value="1"/>
+            <enum name="normal" value="0" />
+            <enum name="precise" value="1" />
         </attr>
-        <attr name="spinner_position" format="enum">
-            <enum name="top" value="0"/>
-            <enum name="bottom" value="1"/>
+        <attr name="measure_spinner_position" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
         </attr>
     </declare-styleable>
 
     <declare-styleable name="MapController">
-        <attr name="hasZoom" format="boolean"/>
+        <attr name="hasZoom" format="boolean" />
+        <attr name="magnification" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="BufferQueryToolbox">
+        <attr name="buffer_spinner_position" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+        </attr>
     </declare-styleable>
 </resources>
