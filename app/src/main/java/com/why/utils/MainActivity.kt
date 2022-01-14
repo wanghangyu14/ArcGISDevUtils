@@ -8,7 +8,6 @@ import com.esri.arcgisruntime.layers.ArcGISTiledLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.permissionx.guolindev.PermissionX
-import com.why.util.showToast
 import kotlinx.android.synthetic.main.activity_main.*
 
 

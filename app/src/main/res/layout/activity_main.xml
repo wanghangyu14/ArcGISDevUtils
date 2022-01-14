@@ -50,7 +50,7 @@
         android:text="bind"/>
 
 
-    <com.why.util.widget.MapController
+    <com.why.arcgisdevutils.widget.MapController
         android:id="@+id/mc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
         android:layout_gravity="bottom"
         app:map_controller_icon_color="@color/blue"/>
 
-    <com.why.util.widget.MapScale
+    <com.why.arcgisdevutils.widget.MapScale
         android:id="@+id/mapscale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
