@@ -30,18 +30,24 @@
 <!--        android:layout_gravity="bottom"-->
 <!--        app:mode="precise"/>-->
 
-    <com.why.util.widget.BufferQueryToolbox
-        android:id="@+id/bufferQueryToolbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:buffer_spinner_position="bottom"
-        />
+<!--    <com.why.util.widget.BufferQueryToolbox-->
+<!--        android:id="@+id/bufferQueryToolbox"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:buffer_spinner_position="bottom"-->
+<!--        />-->
+
+<!--    <com.why.util.widget.PolygonQueryToolbox-->
+<!--        android:id="@+id/polygonQuery"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"/>-->
 
     <Button
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="300dp"/>
+        android:layout_marginTop="300dp"
+        android:text="bind"/>
 
 
     <com.why.util.widget.MapController
@@ -50,6 +56,16 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="80dp"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom"
+        app:map_controller_icon_color="@color/blue"/>
+
+    <com.why.util.widget.MapScale
+        android:id="@+id/mapscale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:scale="1000"
+        app:map_scale_text_color="@color/blue"
+        app:scale_color="@color/blue"/>
 
 </FrameLayout>

@@ -33,17 +33,22 @@ class MainActivity : AppCompatActivity() {
         map.operationalLayers.add(f)
         map.basemap.baseLayers.add(digitalMapLayer)
         mapview.map = map
+
+        mapview.addMapScaleChangedListener {
+            mapscale.setScale(mapview.mapScale.toInt()/100)
+        }
+
 //        measure.bind(mapview)
-        btn.setOnClickListener {
-            if(!bufferQueryToolbox.isBind()){
-                bufferQueryToolbox.bind(mapview)
-            }else{
-                bufferQueryToolbox.unbind()
-            }
-        }
-        bufferQueryToolbox.setOnQueryResultListener { list ->
-            list.toString().showToast(this)
-        }
+//        btn.setOnClickListener {
+//            if(!polygonQuery.isBind()){
+//                polygonQuery.bind(mapview)
+//            }else{
+//                polygonQuery.unbind()
+//            }
+//        }
+//        polygonQuery.setOnQueryResultListener { list ->
+//            list.toString().showToast(this)
+//        }
         mc.bind(mapview)
 
 //        val fd = FileDownloader(this)

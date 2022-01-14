@@ -71,5 +71,5 @@
         android:layout_height="32dp"
         android:scaleType="centerCrop"
         android:padding="4dp"
-        android:src="@drawable/length_selected" />
+        android:src="@drawable/length_selected"/>
 </LinearLayout>

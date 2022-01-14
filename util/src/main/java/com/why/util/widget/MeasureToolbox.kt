@@ -3,6 +3,7 @@ package com.why.util.widget
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.util.AttributeSet
@@ -48,6 +49,8 @@ class MeasureToolbox @JvmOverloads constructor(
         lineSymbol
     )
     private val imageView = ImageView(context)
+    private var textColor = Color.BLACK
+    private var iconColor = context.resources.getColor(R.color.blue,context.theme)
 
 
     init {
@@ -55,8 +58,11 @@ class MeasureToolbox @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MeasureToolbox)
         mode = typedArray.getInt(R.styleable.MeasureToolbox_mode, 0)
         spinnerPosition = typedArray.getInt(R.styleable.MeasureToolbox_measure_spinner_position, 0)
+        textColor = typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_text_color,textColor)
+        iconColor = typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_icon_color,iconColor)
         typedArray.recycle()
         initView()
+        setColor()
     }
 
 
@@ -342,6 +348,16 @@ class MeasureToolbox @JvmOverloads constructor(
         }
     }
 
+    private fun setColor(){
+        closeMeasure.imageTintList= ColorStateList.valueOf(iconColor)
+        undo.imageTintList= ColorStateList.valueOf(iconColor)
+        redo.imageTintList= ColorStateList.valueOf(iconColor)
+        addPoint.imageTintList= ColorStateList.valueOf(iconColor)
+        trashMeasure.imageTintList= ColorStateList.valueOf(iconColor)
+        lengthAndArea.imageTintList= ColorStateList.valueOf(iconColor)
+        measureResult.setTextColor(textColor)
+        measureUnit.setTextColor(textColor)
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {

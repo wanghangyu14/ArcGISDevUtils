@@ -3,7 +3,9 @@ package com.why.util.widget
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.*
+import android.graphics.drawable.NinePatchDrawable
 import android.util.AttributeSet
 import android.view.View
 import com.why.util.R
@@ -30,16 +32,22 @@ class MapScale @JvmOverloads constructor(
         typeface = Typeface.DEFAULT_BOLD
     }
     private var text = "100米"
+    private var textColor = Color.BLACK
+    private var scaleColor = Color.BLACK
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MapScale)
-        fontSize = typedArray.getDimensionPixelSize(R.styleable.MapScale_font_size, 8.dp2px(context)).toFloat()
-        scale = typedArray.getInt(R.styleable.MapScale_scale,100)
+        fontSize =
+            typedArray.getDimensionPixelSize(R.styleable.MapScale_font_size, 8.dp2px(context))
+                .toFloat()
+        scale = typedArray.getInt(R.styleable.MapScale_scale, 100)
+        textColor = typedArray.getColor(R.styleable.MapScale_map_scale_text_color, textColor)
+        scaleColor = typedArray.getColor(R.styleable.MapScale_scale_color, scaleColor)
         calculateWidth()
         paint.textSize = fontSize
+        paint.color = textColor
         typedArray.recycle()
     }
-
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -47,6 +55,7 @@ class MapScale @JvmOverloads constructor(
         val heightSize = getHeightSize(heightMeasureSpec)
         setMeasuredDimension(widthSize, heightSize)
     }
+
 
     private fun getWidthSize(widthMeasureSpec: Int): Int {
         return MeasureSpec.getSize(widthMeasureSpec)
@@ -87,8 +96,10 @@ class MapScale @JvmOverloads constructor(
 
     private fun drawNinePatch(canvas: Canvas, resId: Int, rect: Rect) {
         val bmp = BitmapFactory.decodeResource(resources, resId)
-        val patch = NinePatch(bmp, bmp.ninePatchChunk, null)
-        patch.draw(canvas, rect)
+        val patchDrawable = NinePatchDrawable(resources, bmp, bmp.ninePatchChunk, rect, null)
+        patchDrawable.setBounds(rect.left,rect.top,rect.right,rect.bottom)
+        patchDrawable.setTintList(ColorStateList.valueOf(scaleColor))
+        patchDrawable.draw(canvas)
     }
 
     private fun getPPIOfDevice(): Double {
@@ -109,11 +120,11 @@ class MapScale @JvmOverloads constructor(
 
     private fun calculateWidth() {
         when (scale) {
-            in 1..5 ->{
+            in 1..5 -> {
                 text = "5米"
                 scaleWidth = (5 * ppcm / scale).toInt()
             }
-            in 6..10->{
+            in 6..10 -> {
                 text = "10米"
                 scaleWidth = (10 * ppcm / scale).toInt()
             }
@@ -188,7 +199,7 @@ class MapScale @JvmOverloads constructor(
         }
     }
 
-    fun setScale(newScale:Int){
+    fun setScale(newScale: Int) {
         scale = newScale
         refreshScaleView()
     }
