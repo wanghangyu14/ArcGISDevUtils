@@ -2,7 +2,10 @@ package com.why.utils
 
 import android.Manifest
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.esri.arcgisruntime.data.ServiceFeatureTable
 import com.esri.arcgisruntime.layers.ArcGISTiledLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
@@ -78,5 +81,40 @@ class MainActivity : AppCompatActivity() {
 //                    }
 //                }
 //        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.measure->{
+                measure.bind(mapview)
+                polygonQuery.unbind()
+                bufferQueryToolbox.unbind()
+                measure.isVisible = true
+                polygonQuery.isVisible = false
+                bufferQueryToolbox.isVisible = false
+            }
+            R.id.polygon->{
+                polygonQuery.bind(mapview)
+                measure.unbind()
+                bufferQueryToolbox.unbind()
+                measure.isVisible = false
+                polygonQuery.isVisible = true
+                bufferQueryToolbox.isVisible = false
+            }
+            R.id.buffer->{
+                bufferQueryToolbox.bind(mapview)
+                measure.unbind()
+                polygonQuery.unbind()
+                measure.isVisible = false
+                polygonQuery.isVisible = false
+                bufferQueryToolbox.isVisible = true
+            }
+        }
+        return true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.tool_menu,menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }

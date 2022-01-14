@@ -7,65 +7,57 @@
     tools:context=".MainActivity">
 
 
-<!--    <ProgressBar-->
-<!--        android:id="@+id/progressBar"-->
-<!--        style="?android:attr/progressBarStyleHorizontal"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+    <!--    <ProgressBar-->
+    <!--        android:id="@+id/progressBar"-->
+    <!--        style="?android:attr/progressBarStyleHorizontal"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
     <com.esri.arcgisruntime.mapping.view.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 
-<!--    <com.why.util.widget.MeasureToolbox-->
-<!--        android:id="@+id/measure"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:spinner_position="top"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        app:mode="precise"/>-->
+    <com.why.arcgisdevutils.widget.MeasureToolbox
+        android:id="@+id/measure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mode="precise"
+        app:measure_spinner_position="bottom"
+        android:visibility="gone"/>
 
-<!--    <com.why.util.widget.BufferQueryToolbox-->
-<!--        android:id="@+id/bufferQueryToolbox"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:buffer_spinner_position="bottom"-->
-<!--        />-->
+    <com.why.arcgisdevutils.widget.BufferQueryToolbox
+        android:id="@+id/bufferQueryToolbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:buffer_spinner_position="bottom"
+        android:visibility="gone"/>
 
-<!--    <com.why.util.widget.PolygonQueryToolbox-->
-<!--        android:id="@+id/polygonQuery"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"/>-->
-
-    <Button
-        android:id="@+id/btn"
+    <com.why.arcgisdevutils.widget.PolygonQueryToolbox
+        android:id="@+id/polygonQuery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="300dp"
-        android:text="bind"/>
+        android:visibility="gone"/>
 
 
     <com.why.arcgisdevutils.widget.MapController
         android:id="@+id/mc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="80dp"
         android:layout_gravity="bottom"
-        app:map_controller_icon_color="@color/blue"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="80dp" />
 
     <com.why.arcgisdevutils.widget.MapScale
         android:id="@+id/mapscale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_margin="10dp"
-        app:scale="1000"
-        app:map_scale_text_color="@color/blue"
-        app:scale_color="@color/blue"/>
+        app:scale="1000" />
 
 </FrameLayout>

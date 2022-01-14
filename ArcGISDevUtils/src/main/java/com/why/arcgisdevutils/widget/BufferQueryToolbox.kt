@@ -29,7 +29,7 @@ class BufferQueryToolbox @JvmOverloads constructor(
 ) : LinearLayout(context, attrs) {
     private var mMapView: MapView? = null
     private var spinnerPosition = 0
-    private var unit: LenUnit = Meter
+    private var unit: LinearUnitId = LinearUnitId.METERS
     private val graphicOverlay = GraphicsOverlay()
     private val dotSymbol = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 8F)
     private val lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.BLACK, 2F)
@@ -49,22 +49,26 @@ class BufferQueryToolbox @JvmOverloads constructor(
 
 
     fun bind(mapView: MapView) {
-        mMapView = mapView
-        mMapView?.graphicsOverlays?.add(graphicOverlay)
-        initListener()
+        if(!isBind()){
+            mMapView = mapView
+            mMapView?.graphicsOverlays?.add(graphicOverlay)
+            initListener()
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {
-        mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
-        graphicOverlay.graphics.clear()
-        mMapView?.graphicsOverlays?.clear()
-        clearSelection()
-        bufferRadius.setText("0")
-        bufferRadius.clearFocus()
-        bufferUnit.text = "m"
-        unit = Meter
-        mMapView = null
+        if(isBind()){
+            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            graphicOverlay.graphics.clear()
+            mMapView?.graphicsOverlays?.clear()
+            clearSelection()
+            bufferRadius.setText("0")
+            bufferRadius.clearFocus()
+            bufferUnit.text = "m"
+            unit = LinearUnitId.METERS
+            mMapView = null
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
@@ -81,17 +85,17 @@ class BufferQueryToolbox @JvmOverloads constructor(
                 )
                 val radius = bufferRadius.text.toString().toDouble()
                 val bufferGeometry = when (unit) {
-                    Meter -> GeometryEngine.bufferGeodetic(
+                    LinearUnitId.METERS -> GeometryEngine.bufferGeodetic(
                         point, radius,
                         LinearUnit(LinearUnitId.METERS), Double.NaN, GeodeticCurveType.GEODESIC
                     )
-                    Li -> GeometryEngine.bufferGeodetic(
-                        point, radius / 2,
-                        LinearUnit(LinearUnitId.METERS), Double.NaN, GeodeticCurveType.GEODESIC
-                    )
-                    KiloMeter -> GeometryEngine.bufferGeodetic(
+                    LinearUnitId.KILOMETERS -> GeometryEngine.bufferGeodetic(
                         point, radius,
                         LinearUnit(LinearUnitId.KILOMETERS), Double.NaN, GeodeticCurveType.GEODESIC
+                    )
+                    else -> GeometryEngine.bufferGeodetic(
+                        point, radius/2,
+                        LinearUnit(LinearUnitId.METERS), Double.NaN, GeodeticCurveType.GEODESIC
                     )
                 }
                 graphicOverlay.graphics.add(Graphic(bufferGeometry, fillSymbol))
@@ -118,15 +122,15 @@ class BufferQueryToolbox @JvmOverloads constructor(
                 when (checkedId) {
                     R.id.meter -> {
                         bufferUnit.text = "m"
-                        unit = Meter
+                        unit = LinearUnitId.METERS
                     }
                     R.id.li -> {
                         bufferUnit.text = "里"
-                        unit = Li
+                        unit = LinearUnitId.OTHER
                     }
                     R.id.kilometer -> {
                         bufferUnit.text = "km"
-                        unit = KiloMeter
+                        unit = LinearUnitId.KILOMETERS
                     }
                 }
             }

@@ -285,33 +285,36 @@ class MeasureToolbox @JvmOverloads constructor(
     }
 
     fun bind(mapView: MapView) {
-        mMapView = mapView
-        mMapView?.let { mapview ->
-            if (mode != 0) {
-                mapview.post {
-                    val params = WindowManager.LayoutParams()
-                    val location = IntArray(2)
-                    val statusBarId =
-                        context.resources.getIdentifier("status_bar_height", "dimen", "android")
-                    val statusBarHeight = context.resources.getDimensionPixelSize(statusBarId)
-                    mapview.getLocationInWindow(location)
-                    params.apply {
-                        gravity = Gravity.TOP or Gravity.LEFT
-                        width = WRAP_CONTENT
-                        height = WRAP_CONTENT
-                        x = location[0] + (mapview.width - 21.dp2px(context)) / 2
-                        y = location[1] + (mapview.height - 21.dp2px(context)) / 2 - statusBarHeight
-                        format = PixelFormat.RGBA_8888
-                        flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        type = WindowManager.LayoutParams.TYPE_APPLICATION
+        if (!isBind()) {
+            mMapView = mapView
+            mMapView?.let { mapview ->
+                if (mode != 0) {
+                    mapview.post {
+                        val params = WindowManager.LayoutParams()
+                        val location = IntArray(2)
+                        val statusBarId =
+                            context.resources.getIdentifier("status_bar_height", "dimen", "android")
+                        val statusBarHeight = context.resources.getDimensionPixelSize(statusBarId)
+                        mapview.getLocationInWindow(location)
+                        params.apply {
+                            gravity = Gravity.TOP or Gravity.LEFT
+                            width = WRAP_CONTENT
+                            height = WRAP_CONTENT
+                            x = location[0] + (mapview.width - 21.dp2px(context)) / 2
+                            y =
+                                location[1] + (mapview.height - 21.dp2px(context)) / 2 - statusBarHeight
+                            format = PixelFormat.RGBA_8888
+                            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            type = WindowManager.LayoutParams.TYPE_APPLICATION
+                        }
+                        val windowManager = (context as Activity).windowManager
+                        windowManager.addView(imageView, params)
                     }
-                    val windowManager = (context as Activity).windowManager
-                    windowManager.addView(imageView, params)
                 }
             }
+            initListener()
+            mMapView?.graphicsOverlays?.add(graphicOverlay)
         }
-        initListener()
-        mMapView?.graphicsOverlays?.add(graphicOverlay)
     }
 
 
@@ -362,21 +365,23 @@ class MeasureToolbox @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {
-        if (mode == 0) {
-            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+        if(isBind()){
+            if (mode == 0) {
+                mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            }
+            graphicOverlay.graphics.clear()
+            mMapView?.graphicsOverlays?.clear()
+            measureResult.text = "0"
+            measureUnit.text = "m"
+            isLen = true
+            lengthAndArea.setImageResource(R.drawable.length_selected)
+            points.clear()
+            temp.clear()
+            if (mode == 1) {
+                (context as Activity).windowManager.removeView(imageView)
+            }
+            mMapView = null
         }
-        graphicOverlay.graphics.clear()
-        mMapView?.graphicsOverlays?.clear()
-        measureResult.text = "0"
-        measureUnit.text = "m"
-        isLen = true
-        lengthAndArea.setImageResource(R.drawable.length_selected)
-        points.clear()
-        temp.clear()
-        if (mode == 1) {
-            (context as Activity).windowManager.removeView(imageView)
-        }
-        mMapView = null
     }
 
     fun isBind() = mMapView != null

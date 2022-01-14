@@ -57,21 +57,25 @@ class PolygonQueryToolbox @JvmOverloads constructor(
 
 
     fun bind(mapView: MapView) {
-        mMapView = mapView
-        mMapView?.graphicsOverlays?.add(graphicsOverlay)
-        initListener()
+        if(!isBind()){
+            mMapView = mapView
+            mMapView?.graphicsOverlays?.add(graphicsOverlay)
+            initListener()
+        }
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {
-        mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
-        points.clear()
-        temp.clear()
-        graphicsOverlay.graphics.clear()
-        mMapView?.graphicsOverlays?.clear()
-        clearSelection()
-        mMapView = null
+        if(isBind()){
+            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            points.clear()
+            temp.clear()
+            graphicsOverlay.graphics.clear()
+            mMapView?.graphicsOverlays?.clear()
+            clearSelection()
+            mMapView = null
+        }
     }
 
     fun setOnQueryResultListener(listener: (list: List<Pair<String, List<Feature>>>) -> Unit) {
