@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.why.arcgisdevutils">
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <queries>
+        <package android:name="com.autonavi.minimap" />
+        <package android:name="com.tencent.map"/>
+        <package android:name="com.baidu.BaiduMap"/>
+    </queries>
+</manifest>

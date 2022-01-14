@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MapScale">
+        <attr name="font_size" format="dimension" />
+        <attr name="scale" format="integer" />
+        <attr name="map_scale_text_color" format="color"/>
+        <attr name="scale_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="MeasureToolbox">
+        <attr name="mode" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="precise" value="1" />
+        </attr>
+        <attr name="measure_spinner_position" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+        </attr>
+        <attr name="measure_toolbox_icon_color" format="color"/>
+        <attr name="measure_toolbox_text_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="MapController">
+        <attr name="hasZoom" format="boolean" />
+        <attr name="magnification" format="integer" />
+        <attr name="map_controller_icon_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="BufferQueryToolbox">
+        <attr name="buffer_spinner_position" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+        </attr>
+        <attr name="buffer_query_toolbox_icon_color" format="color"/>
+        <attr name="buffer_query_toolbox_text_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="PolygonQueryToolbox">
+        <attr name="polygon_query_toolbox_icon_color" format="color"/>
+    </declare-styleable>
+</resources>
