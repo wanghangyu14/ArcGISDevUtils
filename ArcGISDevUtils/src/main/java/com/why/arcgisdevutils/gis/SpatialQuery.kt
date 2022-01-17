@@ -9,7 +9,7 @@ import com.esri.arcgisruntime.layers.FeatureLayer
 fun spatialQuery(
     geom: Geometry,
     list: List<FeatureLayer>
-): List<Pair<String, List<Feature>>> {
+): Map<String,List<Feature>> {
     val queryParameters = QueryParameters().apply {
         geometry = geom
     }
@@ -22,5 +22,5 @@ fun spatialQuery(
         ).get().toList()
         list[index].selectFeatures(selected)
         list[index].name to selected
-    }
+    }.toMap()
 }
