@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.LinearLayout
-import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener
@@ -19,7 +18,6 @@ import com.esri.arcgisruntime.symbology.SimpleFillSymbol
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
 import com.why.arcgisdevutils.R
-import com.why.arcgisdevutils.gis.spatialQuery
 import kotlinx.android.synthetic.main.buffer_query_toolbox.view.*
 import razerdp.basepopup.BasePopupWindow
 import kotlin.math.roundToInt
@@ -30,52 +28,18 @@ class BufferQueryToolbox @JvmOverloads constructor(
     private var mMapView: MapView? = null
     private var spinnerPosition = 0
     private var unit: LinearUnitId = LinearUnitId.METERS
-    private val graphicOverlay = GraphicsOverlay()
+    private val graphicsOverlay = GraphicsOverlay()
     private val dotSymbol = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 8F)
     private val lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.BLACK, 2F)
     private val fillSymbol = SimpleFillSymbol(
         SimpleFillSymbol.Style.SOLID, Color.argb(50, 0, 255, 0),
         lineSymbol
     )
-    private var onQueryResult: ((list: List<Pair<String, List<Feature>>>) -> Unit)? = null
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.buffer_query_toolbox, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BufferQueryToolbox)
-        spinnerPosition =
-            typedArray.getInt(R.styleable.BufferQueryToolbox_buffer_spinner_position, 0)
-        typedArray.recycle()
-    }
-
-
-    fun bind(mapView: MapView) {
-        if(!isBind()){
-            mMapView = mapView
-            mMapView?.graphicsOverlays?.add(graphicOverlay)
-            initListener()
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    fun unbind() {
-        if(isBind()){
-            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
-            graphicOverlay.graphics.clear()
-            mMapView?.graphicsOverlays?.clear()
-            clearSelection()
-            bufferRadius.setText("0")
-            bufferRadius.clearFocus()
-            bufferUnit.text = "m"
-            unit = LinearUnitId.METERS
-            mMapView = null
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
-    private fun initListener() {
-        mMapView?.onTouchListener = object : DefaultMapViewOnTouchListener(context, mMapView) {
+    private var onQueryResult: ((geometry: Geometry) -> Unit)? = null
+    private val mapListener by lazy {
+        object : DefaultMapViewOnTouchListener(context, mMapView) {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                graphicOverlay.graphics.clear()
+                graphicsOverlay.graphics.clear()
                 clearSelection()
                 val point = mMapView.screenToLocation(
                     android.graphics.Point(
@@ -94,23 +58,59 @@ class BufferQueryToolbox @JvmOverloads constructor(
                         LinearUnit(LinearUnitId.KILOMETERS), Double.NaN, GeodeticCurveType.GEODESIC
                     )
                     else -> GeometryEngine.bufferGeodetic(
-                        point, radius/2,
+                        point, radius / 2,
                         LinearUnit(LinearUnitId.METERS), Double.NaN, GeodeticCurveType.GEODESIC
                     )
                 }
-                graphicOverlay.graphics.add(Graphic(bufferGeometry, fillSymbol))
-                graphicOverlay.graphics.add(Graphic(point, dotSymbol))
-                val optionalLayers = mMapView.map.operationalLayers
-                val result = spatialQuery(
-                    bufferGeometry,
-                    List(optionalLayers.size) { index -> optionalLayers[index] as FeatureLayer })
-                onQueryResult?.invoke(result)
+                graphicsOverlay.graphics.add(Graphic(bufferGeometry, fillSymbol))
+                graphicsOverlay.graphics.add(Graphic(point, dotSymbol))
+                onQueryResult?.invoke(bufferGeometry)
                 return super.onSingleTapConfirmed(e)
             }
         }
+    }
+
+    init {
+        LayoutInflater.from(context).inflate(R.layout.buffer_query_toolbox, this, true)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BufferQueryToolbox)
+        spinnerPosition =
+            typedArray.getInt(R.styleable.BufferQueryToolbox_buffer_spinner_position, 0)
+        typedArray.recycle()
+    }
+
+
+    fun bind(mapView: MapView) {
+        if (!isBind()) {
+            mMapView = mapView
+            mMapView?.graphicsOverlays?.add(graphicsOverlay)
+            initListener()
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    fun unbind() {
+        if (isBind()) {
+            if (mMapView?.onTouchListener == mapListener) {
+                mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            }
+            graphicsOverlay.graphics.clear()
+            mMapView?.graphicsOverlays?.remove(graphicsOverlay)
+            clearSelection()
+            bufferRadius.setText("0")
+            bufferRadius.clearFocus()
+            bufferUnit.text = "m"
+            unit = LinearUnitId.METERS
+            mMapView = null
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
+    private fun initListener() {
+        mMapView?.onTouchListener = mapListener
 
         clearBuffer.setOnClickListener {
-            graphicOverlay.graphics.clear()
+            graphicsOverlay.graphics.clear()
+            clearSelection()
         }
 
         bufferUnit.setOnClickListener {
@@ -154,7 +154,7 @@ class BufferQueryToolbox @JvmOverloads constructor(
         }
     }
 
-    fun setOnQueryResultListener(listener: (list: List<Pair<String, List<Feature>>>) -> Unit) {
+    fun setOnQueryResultListener(listener: (geometry: Geometry) -> Unit) {
         onQueryResult = listener
     }
 

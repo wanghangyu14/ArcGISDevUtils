@@ -50,6 +50,44 @@ class MeasureToolbox @JvmOverloads constructor(
     private val imageView = ImageView(context)
     private var textColor = Color.BLACK
     private var iconColor = context.resources.getColor(R.color.blue, context.theme)
+    private val mapListener by lazy {
+        object : DefaultMapViewOnTouchListener(context, mMapView) {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                val point = mMapView.screenToLocation(
+                    android.graphics.Point(
+                        e.x.roundToInt(),
+                        e.y.roundToInt()
+                    )
+                )
+                points.add(point)
+                graphicOverlay.graphics.add(Graphic(point, dotSymbol))
+                if (isLen) {
+                    if (points.size > 1) {
+                        graphicOverlay.graphics.add(
+                            Graphic(
+                                Polyline(PointCollection(points)),
+                                lineSymbol
+                            )
+                        )
+                        measureResult.text = len()
+                    }
+                } else {
+                    graphicOverlay.graphics.clear()
+                    points.forEach {
+                        graphicOverlay.graphics.add(Graphic(it, dotSymbol))
+                    }
+                    graphicOverlay.graphics.add(
+                        Graphic(
+                            Polygon(PointCollection(points)),
+                            fillSymbol
+                        )
+                    )
+                    measureResult.text = area()
+                }
+                return super.onSingleTapConfirmed(e)
+            }
+        }
+    }
 
 
     init {
@@ -115,42 +153,7 @@ class MeasureToolbox @JvmOverloads constructor(
         }
 
         if (mode == 0) {
-            mMapView?.onTouchListener = object : DefaultMapViewOnTouchListener(context, mMapView) {
-                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                    val point = mMapView.screenToLocation(
-                        android.graphics.Point(
-                            e.x.roundToInt(),
-                            e.y.roundToInt()
-                        )
-                    )
-                    points.add(point)
-                    graphicOverlay.graphics.add(Graphic(point, dotSymbol))
-                    if (isLen) {
-                        if (points.size > 1) {
-                            graphicOverlay.graphics.add(
-                                Graphic(
-                                    Polyline(PointCollection(points)),
-                                    lineSymbol
-                                )
-                            )
-                            measureResult.text = len()
-                        }
-                    } else {
-                        graphicOverlay.graphics.clear()
-                        points.forEach {
-                            graphicOverlay.graphics.add(Graphic(it, dotSymbol))
-                        }
-                        graphicOverlay.graphics.add(
-                            Graphic(
-                                Polygon(PointCollection(points)),
-                                fillSymbol
-                            )
-                        )
-                        measureResult.text = area()
-                    }
-                    return super.onSingleTapConfirmed(e)
-                }
-            }
+            mMapView?.onTouchListener = mapListener
         } else {
             addPoint.setOnClickListener {
                 mMapView?.let { mapview ->
@@ -365,12 +368,12 @@ class MeasureToolbox @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {
-        if(isBind()){
-            if (mode == 0) {
+        if (isBind()) {
+            if (mode == 0 && mMapView?.onTouchListener == mapListener) {
                 mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
             }
             graphicOverlay.graphics.clear()
-            mMapView?.graphicsOverlays?.clear()
+            mMapView?.graphicsOverlays?.remove(graphicOverlay)
             measureResult.text = "0"
             measureUnit.text = "m"
             isLen = true

@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.LinearLayout
-import com.esri.arcgisruntime.data.Feature
+import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.PointCollection
 import com.esri.arcgisruntime.geometry.Polygon
@@ -20,7 +20,6 @@ import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.SimpleFillSymbol
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.why.arcgisdevutils.R
-import com.why.arcgisdevutils.gis.spatialQuery
 import kotlinx.android.synthetic.main.polygon_query_toolbox.view.*
 import kotlin.math.roundToInt
 
@@ -37,12 +36,30 @@ class PolygonQueryToolbox @JvmOverloads constructor(
         lineSymbol
     )
     private var iconColor = Color.BLACK
-    private var onQueryResult: ((list: List<Pair<String, List<Feature>>>) -> Unit)? = null
+    private var onQueryResult: ((geometry: Geometry) -> Unit)? = null
+    private val mapListener by lazy {
+        object : DefaultMapViewOnTouchListener(context, mMapView) {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                val point = mMapView.screenToLocation(
+                    android.graphics.Point(
+                        e.x.roundToInt(),
+                        e.y.roundToInt()
+                    )
+                )
+                points.add(point)
+                drawPolygon()
+                return super.onSingleTapConfirmed(e)
+            }
+        }
+    }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.polygon_query_toolbox, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs,R.styleable.PolygonQueryToolbox)
-        iconColor = typedArray.getColor(R.styleable.PolygonQueryToolbox_polygon_query_toolbox_icon_color,iconColor)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PolygonQueryToolbox)
+        iconColor = typedArray.getColor(
+            R.styleable.PolygonQueryToolbox_polygon_query_toolbox_icon_color,
+            iconColor
+        )
         typedArray.recycle()
         setColor()
     }
@@ -57,7 +74,7 @@ class PolygonQueryToolbox @JvmOverloads constructor(
 
 
     fun bind(mapView: MapView) {
-        if(!isBind()){
+        if (!isBind()) {
             mMapView = mapView
             mMapView?.graphicsOverlays?.add(graphicsOverlay)
             initListener()
@@ -67,37 +84,27 @@ class PolygonQueryToolbox @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {
-        if(isBind()){
-            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+        if (isBind()) {
+            if (mMapView?.onTouchListener == mapListener) {
+                mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            }
             points.clear()
             temp.clear()
             graphicsOverlay.graphics.clear()
-            mMapView?.graphicsOverlays?.clear()
+            mMapView?.graphicsOverlays?.remove(graphicsOverlay)
             clearSelection()
             mMapView = null
         }
     }
 
-    fun setOnQueryResultListener(listener: (list: List<Pair<String, List<Feature>>>) -> Unit) {
+    fun setOnQueryResultListener(listener: (geometry: Geometry) -> Unit) {
         onQueryResult = listener
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initListener() {
-        mMapView?.onTouchListener = object : DefaultMapViewOnTouchListener(context, mMapView) {
-            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                val point = mMapView.screenToLocation(
-                    android.graphics.Point(
-                        e.x.roundToInt(),
-                        e.y.roundToInt()
-                    )
-                )
-                points.add(point)
-                drawPolygon()
-                return super.onSingleTapConfirmed(e)
-            }
-        }
+        mMapView?.onTouchListener = mapListener
 
         undo.setOnClickListener {
             if (points.isNotEmpty()) {
@@ -115,13 +122,7 @@ class PolygonQueryToolbox @JvmOverloads constructor(
 
         complete.setOnClickListener {
             clearSelection()
-            val optionalLayers = mMapView?.map?.operationalLayers
-            optionalLayers?.let {
-                val result = spatialQuery(
-                    Polygon(PointCollection(points)),
-                    List(optionalLayers.size) { index -> optionalLayers[index] as FeatureLayer })
-                onQueryResult?.invoke(result)
-            }
+            onQueryResult?.invoke(Polygon(PointCollection(points)))
         }
 
 

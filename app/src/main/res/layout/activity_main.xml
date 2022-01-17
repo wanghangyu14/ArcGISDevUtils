@@ -38,7 +38,7 @@
         android:visibility="gone"/>
 
     <com.why.arcgisdevutils.widget.PolygonQueryToolbox
-        android:id="@+id/polygonQuery"
+        android:id="@+id/polygonQueryToolbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -46,7 +46,7 @@
 
 
     <com.why.arcgisdevutils.widget.MapController
-        android:id="@+id/mc"
+        android:id="@+id/mapController"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -54,7 +54,7 @@
         android:layout_marginBottom="80dp" />
 
     <com.why.arcgisdevutils.widget.MapScale
-        android:id="@+id/mapscale"
+        android:id="@+id/mapScale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
