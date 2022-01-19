@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
+import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.why.arcgisdevutils.R
 import kotlinx.android.synthetic.main.map_controller.view.*
@@ -17,6 +18,7 @@ class MapController @JvmOverloads constructor(
     private var hasZoom = true
     private var magnification = 2
     private var iconColor = Color.BLACK
+    private var onRelocate :((point:Point)->Unit)? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.map_controller, this, true)
@@ -41,6 +43,7 @@ class MapController @JvmOverloads constructor(
             val locationDisplay = mapView.locationDisplay
             val location = locationDisplay.mapLocation
             mapView.setViewpointCenterAsync(location)
+            onRelocate?.invoke(locationDisplay.location.position)
         }
 
         if (hasZoom) {

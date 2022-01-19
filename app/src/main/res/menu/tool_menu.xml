@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="测量" android:id="@+id/measure"/>
-    <item android:title="缓冲区查询" android:id="@+id/buffer"/>
-    <item android:title="多边形查询" android:id="@+id/polygon"/>
+    <item
+        android:id="@+id/measure"
+        android:title="测量" />
+    <item
+        android:id="@+id/buffer"
+        android:title="缓冲区查询" />
+    <item
+        android:id="@+id/polygon"
+        android:title="多边形查询" />
+    <item
+        android:id="@+id/layer"
+        android:title="图层控制" />
+    <item
+        android:id="@+id/navi"
+        android:title="导航" />
 </menu>

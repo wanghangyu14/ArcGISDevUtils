@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.PointCollection
@@ -37,6 +38,8 @@ class PolygonQueryToolbox @JvmOverloads constructor(
     )
     private var iconColor = Color.BLACK
     private var onQueryResult: ((geometry: Geometry) -> Unit)? = null
+    private var onUnbind: ((view: PolygonQueryToolbox) -> Unit)? = null
+    private var onBind: ((view: PolygonQueryToolbox) -> Unit)? = null
     private val mapListener by lazy {
         object : DefaultMapViewOnTouchListener(context, mMapView) {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -78,6 +81,7 @@ class PolygonQueryToolbox @JvmOverloads constructor(
             mMapView = mapView
             mMapView?.graphicsOverlays?.add(graphicsOverlay)
             initListener()
+            onBind?.invoke(this)
         }
     }
 
@@ -94,6 +98,7 @@ class PolygonQueryToolbox @JvmOverloads constructor(
             mMapView?.graphicsOverlays?.remove(graphicsOverlay)
             clearSelection()
             mMapView = null
+            onUnbind?.invoke(this)
         }
     }
 
@@ -153,6 +158,14 @@ class PolygonQueryToolbox @JvmOverloads constructor(
         mMapView?.map?.operationalLayers?.forEach { layer ->
             (layer as FeatureLayer).clearSelection()
         }
+    }
+
+    fun setOnBindListener(listener: (view: PolygonQueryToolbox) -> Unit) {
+        onBind = listener
+    }
+
+    fun setOnUnbindListener(listener: (view: PolygonQueryToolbox) -> Unit) {
+        onUnbind = listener
     }
 
     fun isBind() = mMapView != null

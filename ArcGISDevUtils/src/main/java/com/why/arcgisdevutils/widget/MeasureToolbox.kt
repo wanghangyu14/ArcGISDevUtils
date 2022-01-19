@@ -88,6 +88,8 @@ class MeasureToolbox @JvmOverloads constructor(
             }
         }
     }
+    private var onUnbind :((view:MeasureToolbox)->Unit)? = null
+    private var onBind :((view:MeasureToolbox)->Unit)? = null
 
 
     init {
@@ -317,6 +319,7 @@ class MeasureToolbox @JvmOverloads constructor(
             }
             initListener()
             mMapView?.graphicsOverlays?.add(graphicOverlay)
+            onBind?.invoke(this)
         }
     }
 
@@ -384,7 +387,16 @@ class MeasureToolbox @JvmOverloads constructor(
                 (context as Activity).windowManager.removeView(imageView)
             }
             mMapView = null
+            onUnbind?.invoke(this)
         }
+    }
+
+    fun setOnBindListener(listener:(view:MeasureToolbox)->Unit){
+        onBind = listener
+    }
+
+    fun setOnUnbindListener(listener:(view:MeasureToolbox)->Unit){
+        onUnbind = listener
     }
 
     fun isBind() = mMapView != null

@@ -38,4 +38,10 @@
     <declare-styleable name="PolygonQueryToolbox">
         <attr name="polygon_query_toolbox_icon_color" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="LayerController">
+        <attr name="title"  format="string"/>
+        <attr name="checkbox_color" format="color"/>
+        <attr name="seekbar_color" format="color"/>
+    </declare-styleable>
 </resources>

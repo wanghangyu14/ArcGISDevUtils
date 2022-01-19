@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener
@@ -36,6 +37,8 @@ class BufferQueryToolbox @JvmOverloads constructor(
         lineSymbol
     )
     private var onQueryResult: ((geometry: Geometry) -> Unit)? = null
+    private var onUnbind :((view:BufferQueryToolbox)->Unit)? = null
+    private var onBind :((view:BufferQueryToolbox)->Unit)? = null
     private val mapListener by lazy {
         object : DefaultMapViewOnTouchListener(context, mMapView) {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -84,6 +87,7 @@ class BufferQueryToolbox @JvmOverloads constructor(
             mMapView = mapView
             mMapView?.graphicsOverlays?.add(graphicsOverlay)
             initListener()
+            onBind?.invoke(this)
         }
     }
 
@@ -101,6 +105,7 @@ class BufferQueryToolbox @JvmOverloads constructor(
             bufferUnit.text = "m"
             unit = LinearUnitId.METERS
             mMapView = null
+            onUnbind?.invoke(this)
         }
     }
 
@@ -156,6 +161,14 @@ class BufferQueryToolbox @JvmOverloads constructor(
 
     fun setOnQueryResultListener(listener: (geometry: Geometry) -> Unit) {
         onQueryResult = listener
+    }
+
+    fun setOnBindListener(listener:(view:BufferQueryToolbox)->Unit){
+        onBind = listener
+    }
+
+    fun setOnUnbindListener(listener:(view:BufferQueryToolbox)->Unit){
+        onUnbind = listener
     }
 
     fun isBind() = mMapView != null
