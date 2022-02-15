@@ -1,6 +1,5 @@
 package com.why.utils
 
-import android.Manifest
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,14 +8,15 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.esri.arcgisruntime.data.ServiceFeatureTable
+import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.layers.ArcGISTiledLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.ArcGISMap
-import com.permissionx.guolindev.PermissionX
 import com.why.arcgisdevutils.gis.Point
 import com.why.arcgisdevutils.gis.spatialQuery
 import com.why.arcgisdevutils.utils.showToast
 import com.why.arcgisdevutils.widget.NavigateDialog
+import com.why.arcgisdevutils.widget.model.LayerOption
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.right_navigation_view.*
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        requestPermissions()
         val digitalMapLayer =
             ArcGISTiledLayer("http://218.2.231.245/historyraster/rest/services/historyVector/js_sldt_grey/MapServer")
 
@@ -40,32 +39,20 @@ class MainActivity : AppCompatActivity() {
         }
         mapController.bind(mapview)
 
-        layerController.bind(mapview).setLayers(
-            mapOf(
-                "高架路网" to listOf(
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/27")),
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/28"))
-                ),
-                "高架下道路路网" to listOf(
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/29")),
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/30"))
-                ),
-                "匝道" to listOf(
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/23")),
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/24"))
-                ),
-                "互通" to listOf(
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/25")),
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/26"))
-                ),
-                "路线坐标" to listOf(
-                    FeatureLayer(ServiceFeatureTable("http://58.216.48.11:6080/arcgis/rest/services/CZ_Vector/MapServer/22"))
-                ),
-                "道路绿化" to listOf(
-                    FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/37"))
-                )
-            )
-        )
+        layerController.bind(mapview)
+        layerController.setLayers(getLayerOptions())
+        layerController.setOnCheckListener { option ->
+            if(option.isSelected){
+                "${option.name}被选中".showToast(this)
+            }else{
+                "${option.name}取消选中".showToast(this)
+            }
+        }
+        layerController.setOnSeekBarChangeListener { option, progress,fromUser ->
+            if(fromUser){
+                "${option.name}当前透明度为$progress".showToast(this)
+            }
+        }
 
         measureToolbox.setOnUnbindListener { view -> view.isVisible = false }
 
@@ -81,34 +68,15 @@ class MainActivity : AppCompatActivity() {
 
         bufferQueryToolbox.setOnQueryResultListener { geometry ->
             lifecycleScope.launch(Dispatchers.IO) {
-                val result = spatialQuery(
-                    geometry,
-                    List(map.operationalLayers.size) { index -> map.operationalLayers[index] as FeatureLayer })
-                runOnUiThread {
-                    result.toString().showToast(this@MainActivity)
-                }
+                spatialQuery(geometry, map)
             }
         }
 
         polygonQueryToolbox.setOnQueryResultListener { geometry ->
-            val result = spatialQuery(
-                geometry,
-                List(map.operationalLayers.size) { index -> map.operationalLayers[index] as FeatureLayer })
-            runOnUiThread {
-                result.toString().showToast(this@MainActivity)
+            lifecycleScope.launch(Dispatchers.IO) {
+                spatialQuery(geometry, map)
             }
         }
-    }
-
-    private fun requestPermissions() {
-        PermissionX.init(this).permissions(Manifest.permission.SYSTEM_ALERT_WINDOW)
-            .onExplainRequestReason { scope, deniedList ->
-                scope.showRequestReasonDialog(deniedList, "申请的权限是程序必须依赖的权限", "确定", "取消")
-            }
-            .onForwardToSettings { scope, deniedList ->
-                scope.showForwardToSettingsDialog(deniedList, "您需要去应用程序设置当中手动开启权限", "确定", "取消")
-            }
-            .request { _, _, _ -> }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -144,4 +112,76 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.tool_menu, menu)
         return true
     }
+
+    override fun onResume() {
+        mapview.resume()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        mapview.pause()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        mapview.dispose()
+        super.onDestroy()
+    }
+
+    private fun spatialQuery(
+        geometry: Geometry,
+        map: ArcGISMap
+    ) {
+        val result = spatialQuery(
+            geometry,
+            List(map.operationalLayers.size) { index -> map.operationalLayers[index] as FeatureLayer })
+        runOnUiThread {
+            result.toString().showToast(this@MainActivity)
+        }
+    }
+
+    private fun getLayerOptions() = listOf(
+        LayerOption(
+            "高架路网",
+            listOf(
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/27")),
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/28"))
+            ),
+            isSelected = true
+        ),
+        LayerOption(
+            "高架下道路路网",
+            listOf(
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/29")),
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/30"))
+            )
+        ),
+        LayerOption(
+            "匝道",
+            listOf(
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/23")),
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/24"))
+            ),
+            isSelected = true
+        ),
+        LayerOption(
+            "互通",
+            listOf(
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/25")),
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/26"))
+            )
+        ),
+        LayerOption(
+            "路线坐标",
+            listOf(
+                FeatureLayer(ServiceFeatureTable("http://58.216.48.11:6080/arcgis/rest/services/CZ_Vector/MapServer/22"))
+            )
+        ),
+        LayerOption(
+            "道路绿化",
+            listOf(
+                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/37"))
+            )
+        )
+    )
 }

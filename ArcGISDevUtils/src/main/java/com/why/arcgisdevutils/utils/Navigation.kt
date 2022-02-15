@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.why.arcgisdevutils.gis.Point
+import me.simple.markethelper.MarketHelper
 
 //高德地图使用的坐标系是gcj02
 fun Context.navigateWithGD(start: Point? = null, destination: Point) {
@@ -24,6 +25,7 @@ fun Context.navigateWithGD(start: Point? = null, destination: Point) {
         startActivity(intent)
     } else {
         "请先安装高德地图".showToast(this)
+        MarketHelper.openBySystem(this,"com.autonavi.minimap")
     }
 }
 
@@ -46,6 +48,7 @@ fun Context.navigateWithTX(start: Point?=null, destination: Point) {
         startActivity(intent)
     } else {
         "请先安装腾讯地图".showToast(this)
+        MarketHelper.openBySystem(this,"com.tencent.map")
     }
 }
 
@@ -68,5 +71,6 @@ fun Context.navigateWithBD(start: Point?=null, destination: Point){
         startActivity(intent)
     }else{
         "请先安装百度地图".showToast(this)
+        MarketHelper.openBySystem(this,"com.baidu.BaiduMap")
     }
 }

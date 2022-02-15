@@ -1,13 +1,11 @@
 package com.why.arcgisdevutils.widget
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.why.arcgisdevutils.R
 import com.why.arcgisdevutils.widget.adapter.LayerChoiceAdapter
@@ -18,56 +16,82 @@ class LayerController @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : LinearLayout(context, attrs) {
     private var catalogTitle = ""
-    private var checkboxColor = ResourcesCompat.getColor(resources, R.color.blue, context.theme)
-    private var seekbarColor = ResourcesCompat.getColor(resources, R.color.blue, context.theme)
+    private var checkboxDrawable: Drawable? = null
+    private var seekbarThumbDrawable: Drawable? = null
+    private var seekbarProgressDrawable: Drawable? = null
+    private var collapsable = true
+    private var isCollapsed = false
+    private var showTitle = true
     private var mMapView: MapView? = null
-    private val layers: MutableList<LayerOption> = mutableListOf()
-    private val adapter = LayerChoiceAdapter(layers){option: LayerOption ->
-        if(option.isSelected){
-            mMapView?.map?.operationalLayers?.addAll(option.layers)
-        }else{
-            mMapView?.map?.operationalLayers?.removeAll(option.layers)
+    private var onCheck: ((option: LayerOption) -> Unit)? = null
+    private val adapter by lazy {
+        LayerChoiceAdapter(
+            checkboxDrawable,
+            seekbarThumbDrawable,
+            seekbarProgressDrawable
+        ) { option: LayerOption ->
+            if (option.isSelected) {
+                mMapView?.map?.operationalLayers?.addAll(option.layers)
+            } else {
+                mMapView?.map?.operationalLayers?.removeAll(option.layers)
+            }
+            onCheck?.invoke(option)
         }
     }
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.LayerController)
         catalogTitle = typedArray.getString(R.styleable.LayerController_title) ?: ""
-        checkboxColor =
-            typedArray.getColor(R.styleable.LayerController_checkbox_color, checkboxColor)
-        seekbarColor = typedArray.getColor(R.styleable.LayerController_seekbar_color, seekbarColor)
+        collapsable = typedArray.getBoolean(R.styleable.LayerController_collapsable,true)
+        isCollapsed = typedArray.getBoolean(R.styleable.LayerController_isCollapsed,false)
+        showTitle = typedArray.getBoolean(R.styleable.LayerController_showTitle,true)
+        checkboxDrawable =
+            typedArray.getDrawable(R.styleable.LayerController_checkbox_drawable)
+        seekbarThumbDrawable =
+            typedArray.getDrawable(R.styleable.LayerController_seekbar_thumb_drawable)
+        seekbarProgressDrawable =
+            typedArray.getDrawable(R.styleable.LayerController_seekbar_progress_drawable)
         LayoutInflater.from(context).inflate(R.layout.layer_controller, this, true)
-        title.text = catalogTitle
         typedArray.recycle()
     }
 
 
-    fun bind(mapView: MapView): LayerController {
+    fun bind(mapView: MapView) {
         mMapView = mapView
-        init()
-        return this
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setLayers(map:Map<String,List<Layer>>) {
-        val list = map.toList()
-        layers.clear()
-        layers.addAll(List(list.size) { index ->
-            LayerOption(
-                list[index].first,
-                list[index].second,
-                100,
-                false
-            )
-        })
-        adapter.setLayers(layers)
-    }
-
-    private fun init() {
-        layerList.adapter = adapter
-
-        spinner.setOnClickListener {
-            layerList.isVisible = !layerList.isVisible
+        if(showTitle){
+            title.text = catalogTitle
+        }else{
+            spinner.isVisible = false
         }
+        if(collapsable){
+            spinner.setOnClickListener {
+                layerList.isVisible = !layerList.isVisible
+            }
+            if(isCollapsed){
+                layerList.isVisible = false
+            }
+        }
+        layerList.adapter = adapter
+    }
+
+    fun setLayers(list: List<LayerOption>) {
+        adapter.setLayers(list)
+    }
+
+
+    fun setOnCheckListener(listener: (option: LayerOption) -> Unit) {
+        onCheck = listener
+    }
+
+    fun setOnSeekBarChangeListener(listener: (option: LayerOption, progress: Int, fromUser: Boolean) -> Unit) {
+        adapter.setOnSeekBarChangeListener(listener)
+    }
+
+    fun getSelectedLayer():List<LayerOption>{
+        val list = mutableListOf<LayerOption>()
+        adapter.getLayers().forEach {
+            if(it.isSelected) list.add(it)
+        }
+        return list
     }
 }

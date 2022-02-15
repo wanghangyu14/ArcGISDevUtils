@@ -21,6 +21,7 @@ allprojects {
         maven {
             url 'https://esri.jfrog.io/artifactory/arcgis'
         }
+        maven { url 'https://jitpack.io' }
     }
 }
 

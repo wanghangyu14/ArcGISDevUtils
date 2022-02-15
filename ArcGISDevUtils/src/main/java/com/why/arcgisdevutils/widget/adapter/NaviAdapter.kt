@@ -26,7 +26,7 @@ class NaviAdapter(private val start: Point?, private val destination: Point?) :
         val holder = ViewHolder(view)
         holder.itemView.setOnClickListener {
             destination?.let {
-                when (holder.adapterPosition) {
+                when (holder.bindingAdapterPosition) {
                     0 -> {
                         parent.context.navigateWithBD(start, destination)
                     }

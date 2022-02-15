@@ -15,6 +15,7 @@
         android:id="@+id/layerController"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="高架道路"/>
+        app:title="高架道路"
+        app:checkbox_drawable="@drawable/checkbox_drawable"/>
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.why.arcgisdevutils.widget.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.why.arcgisdevutils.R
 import com.why.arcgisdevutils.widget.model.LayerOption
 
+// TODO: 2022/1/20 checkbox seekbar样式设置
 class LayerChoiceAdapter(
-    private val list: MutableList<LayerOption>,
+    private val checkboxDrawable: Drawable?,
+    private val seekbarThumbDrawable: Drawable?,
+    private val seekbarProgressDrawable: Drawable?,
     private val onCheckedChange: (option: LayerOption) -> Unit
 ) :
     RecyclerView.Adapter<LayerChoiceAdapter.ViewHolder>() {
+    private val list: MutableList<LayerOption> = mutableListOf()
+    private var onSeekBarChange: ((option: LayerOption, progress: Int, fromUser: Boolean) -> Unit)? =
+        null
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val checkbox: CheckBox = view.findViewById(R.id.checkbox)
         val layerName: TextView = view.findViewById(R.id.layerName)
@@ -24,8 +32,10 @@ class LayerChoiceAdapter(
         val tool: LinearLayout = view.findViewById(R.id.tool)
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.layer_controller_item, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.layer_controller_item, parent, false)
         val holder = ViewHolder(view)
         holder.apply {
             more.setOnClickListener {
@@ -41,11 +51,12 @@ class LayerChoiceAdapter(
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    list[bindingAdapterPosition].apply{
+                    list[bindingAdapterPosition].apply {
                         opacity = progress
                         layers.forEach {
-                            it.opacity = progress/100f
+                            it.opacity = progress / 100f
                         }
+                        onSeekBarChange?.invoke(this, progress, fromUser)
                     }
                     opacity.text = progress.toString()
                 }
@@ -75,9 +86,18 @@ class LayerChoiceAdapter(
     override fun getItemCount() = list.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setLayers(newList: List<LayerOption>){
+    fun setLayers(newList: List<LayerOption>) {
         list.clear()
         list.addAll(newList)
         notifyDataSetChanged()
     }
+
+    fun getLayers():List<LayerOption>{
+        return list
+    }
+
+    fun setOnSeekBarChangeListener(listener: (option: LayerOption, progress: Int, fromUser: Boolean) -> Unit) {
+        onSeekBarChange = listener
+    }
+
 }

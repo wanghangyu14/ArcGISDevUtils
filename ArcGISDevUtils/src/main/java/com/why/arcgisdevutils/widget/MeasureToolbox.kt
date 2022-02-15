@@ -1,19 +1,18 @@
 package com.why.arcgisdevutils.widget
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PixelFormat
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener
@@ -24,7 +23,6 @@ import com.esri.arcgisruntime.symbology.SimpleFillSymbol
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
 import com.why.arcgisdevutils.R
-import com.why.arcgisdevutils.utils.dp2px
 import com.why.arcgisdevutils.gis.calculateArea
 import com.why.arcgisdevutils.gis.calculateLength
 import kotlinx.android.synthetic.main.measure_toolbox.view.*
@@ -50,6 +48,7 @@ class MeasureToolbox @JvmOverloads constructor(
     private val imageView = ImageView(context)
     private var textColor = Color.BLACK
     private var iconColor = context.resources.getColor(R.color.blue, context.theme)
+    private var frontSightColor = Color.BLACK
     private val mapListener by lazy {
         object : DefaultMapViewOnTouchListener(context, mMapView) {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -88,8 +87,10 @@ class MeasureToolbox @JvmOverloads constructor(
             }
         }
     }
-    private var onUnbind :((view:MeasureToolbox)->Unit)? = null
-    private var onBind :((view:MeasureToolbox)->Unit)? = null
+    private var onUnbind: ((view: MeasureToolbox) -> Unit)? = null
+    private var onBind: ((view: MeasureToolbox) -> Unit)? = null
+    private val drawable =
+        ResourcesCompat.getDrawable(resources, R.drawable.ic_front_sight, context.theme)!!
 
 
     init {
@@ -101,6 +102,7 @@ class MeasureToolbox @JvmOverloads constructor(
             typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_text_color, textColor)
         iconColor =
             typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_icon_color, iconColor)
+        frontSightColor = typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_front_sight_color,frontSightColor)
         typedArray.recycle()
         initView()
         setColor()
@@ -295,25 +297,11 @@ class MeasureToolbox @JvmOverloads constructor(
             mMapView?.let { mapview ->
                 if (mode != 0) {
                     mapview.post {
-                        val params = WindowManager.LayoutParams()
-                        val location = IntArray(2)
-                        val statusBarId =
-                            context.resources.getIdentifier("status_bar_height", "dimen", "android")
-                        val statusBarHeight = context.resources.getDimensionPixelSize(statusBarId)
-                        mapview.getLocationInWindow(location)
-                        params.apply {
-                            gravity = Gravity.TOP or Gravity.LEFT
-                            width = WRAP_CONTENT
-                            height = WRAP_CONTENT
-                            x = location[0] + (mapview.width - 21.dp2px(context)) / 2
-                            y =
-                                location[1] + (mapview.height - 21.dp2px(context)) / 2 - statusBarHeight
-                            format = PixelFormat.RGBA_8888
-                            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            type = WindowManager.LayoutParams.TYPE_APPLICATION
-                        }
-                        val windowManager = (context as Activity).windowManager
-                        windowManager.addView(imageView, params)
+                        DrawableCompat.setTint(drawable,frontSightColor)
+                        val bounds = Rect(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+                        bounds.offset((mapview.width-bounds.width())/2,(mapview.height-bounds.height())/2)
+                        drawable.bounds = bounds
+                        mapView.overlay.add(drawable)
                     }
                 }
             }
@@ -384,18 +372,18 @@ class MeasureToolbox @JvmOverloads constructor(
             points.clear()
             temp.clear()
             if (mode == 1) {
-                (context as Activity).windowManager.removeView(imageView)
+                mMapView?.overlay?.remove(drawable)
             }
             mMapView = null
             onUnbind?.invoke(this)
         }
     }
 
-    fun setOnBindListener(listener:(view:MeasureToolbox)->Unit){
+    fun setOnBindListener(listener: (view: MeasureToolbox) -> Unit) {
         onBind = listener
     }
 
-    fun setOnUnbindListener(listener:(view:MeasureToolbox)->Unit){
+    fun setOnUnbindListener(listener: (view: MeasureToolbox) -> Unit) {
         onUnbind = listener
     }
 
