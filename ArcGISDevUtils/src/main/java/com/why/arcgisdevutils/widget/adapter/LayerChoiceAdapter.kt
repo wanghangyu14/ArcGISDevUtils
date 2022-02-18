@@ -1,21 +1,21 @@
 package com.why.arcgisdevutils.widget.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.why.arcgisdevutils.R
 import com.why.arcgisdevutils.widget.model.LayerOption
 
-// TODO: 2022/1/20 checkbox seekbar样式设置
+
 class LayerChoiceAdapter(
-    private val checkboxDrawable: Drawable?,
-    private val seekbarThumbDrawable: Drawable?,
-    private val seekbarProgressDrawable: Drawable?,
+    private val checkboxDrawable: Int,
+    private val seekbarThumbDrawable: Int,
+    private val seekbarProgressDrawable: Int,
     private val onCheckedChange: (option: LayerOption) -> Unit
 ) :
     RecyclerView.Adapter<LayerChoiceAdapter.ViewHolder>() {
@@ -38,6 +38,9 @@ class LayerChoiceAdapter(
             .inflate(R.layout.layer_controller_item, parent, false)
         val holder = ViewHolder(view)
         holder.apply {
+            if(checkboxDrawable!=0) checkbox.setButtonDrawable(checkboxDrawable)
+            if(seekbarThumbDrawable!=0) seekbar.thumb = AppCompatResources.getDrawable(parent.context,seekbarThumbDrawable)
+            if(seekbarProgressDrawable!=0) seekbar.progressDrawable = AppCompatResources.getDrawable(parent.context,seekbarProgressDrawable)
             more.setOnClickListener {
                 tool.isVisible = !tool.isVisible
             }

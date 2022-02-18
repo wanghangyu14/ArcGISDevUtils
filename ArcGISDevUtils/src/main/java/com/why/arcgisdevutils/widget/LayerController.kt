@@ -1,7 +1,6 @@
 package com.why.arcgisdevutils.widget
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -16,9 +15,9 @@ class LayerController @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : LinearLayout(context, attrs) {
     private var catalogTitle = ""
-    private var checkboxDrawable: Drawable? = null
-    private var seekbarThumbDrawable: Drawable? = null
-    private var seekbarProgressDrawable: Drawable? = null
+    private var checkboxDrawable=0
+    private var seekbarThumbDrawable=0
+    private var seekbarProgressDrawable=0
     private var collapsable = true
     private var isCollapsed = false
     private var showTitle = true
@@ -46,11 +45,11 @@ class LayerController @JvmOverloads constructor(
         isCollapsed = typedArray.getBoolean(R.styleable.LayerController_isCollapsed,false)
         showTitle = typedArray.getBoolean(R.styleable.LayerController_showTitle,true)
         checkboxDrawable =
-            typedArray.getDrawable(R.styleable.LayerController_checkbox_drawable)
+            typedArray.getResourceId(R.styleable.LayerController_checkbox_drawable,0)
         seekbarThumbDrawable =
-            typedArray.getDrawable(R.styleable.LayerController_seekbar_thumb_drawable)
+            typedArray.getResourceId(R.styleable.LayerController_seekbar_thumb_drawable,0)
         seekbarProgressDrawable =
-            typedArray.getDrawable(R.styleable.LayerController_seekbar_progress_drawable)
+            typedArray.getResourceId(R.styleable.LayerController_seekbar_progress_drawable,0)
         LayoutInflater.from(context).inflate(R.layout.layer_controller, this, true)
         typedArray.recycle()
     }
