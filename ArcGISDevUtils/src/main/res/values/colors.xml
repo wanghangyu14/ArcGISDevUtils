@@ -4,4 +4,5 @@
     <color name="gray">#8a8a8a</color>
     <color name="light_gray">#e6e6e6</color>
     <color name="text_normal_color">#979797</color>
+    <color name="red">#FF0000</color>
 </resources>

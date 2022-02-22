@@ -56,6 +56,13 @@
             android:layout_gravity="bottom"
             android:layout_margin="10dp"
             app:scale="1000" />
+
+        <com.why.arcgisdevutils.widget.ArtBoard
+            android:id="@+id/artBoard"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include layout="@layout/right_navigation_view" />

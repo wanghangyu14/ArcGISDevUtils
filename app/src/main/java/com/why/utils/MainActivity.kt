@@ -62,6 +62,10 @@ class MainActivity : AppCompatActivity() {
 
         measureToolbox.setOnBindListener { view -> view.isVisible = true }
 
+        artBoard.setOnBindListener {view -> view.isVisible = true   }
+
+        artBoard.setOnUnbindListener { view -> view.isVisible = false  }
+
         bufferQueryToolbox.setOnBindListener { view -> view.isVisible = true }
 
         polygonQueryToolbox.setOnBindListener { view -> view.isVisible = true }
@@ -77,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                 spatialQuery(geometry, map)
             }
         }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -85,16 +90,25 @@ class MainActivity : AppCompatActivity() {
                 measureToolbox.bind(mapview)
                 polygonQueryToolbox.unbind()
                 bufferQueryToolbox.unbind()
+                artBoard.unbind()
             }
             R.id.polygon -> {
                 polygonQueryToolbox.bind(mapview)
                 measureToolbox.unbind()
                 bufferQueryToolbox.unbind()
+                artBoard.unbind()
             }
             R.id.buffer -> {
                 bufferQueryToolbox.bind(mapview)
                 measureToolbox.unbind()
                 polygonQueryToolbox.unbind()
+                artBoard.unbind()
+            }
+            R.id.artBoard->{
+                artBoard.bind(mapview)
+                measureToolbox.unbind()
+                polygonQueryToolbox.unbind()
+                bufferQueryToolbox.unbind()
             }
             R.id.layer -> {
                 drawerLayout.openDrawer(GravityCompat.END)

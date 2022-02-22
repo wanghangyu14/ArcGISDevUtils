@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/colorIndicator"
+        android:layout_width="45dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:background="@color/red"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true" />
+
+
+    <RadioGroup
+        android:id="@+id/lineWidthSelector"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/small"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="细"
+            android:checked="true"
+            android:buttonTint="@color/blue"/>
+
+        <RadioButton
+            android:id="@+id/medium"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="中"
+            android:buttonTint="@color/blue"/>
+
+        <RadioButton
+            android:id="@+id/large"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="粗"
+            android:buttonTint="@color/blue"/>
+
+    </RadioGroup>
+
+    <ImageView
+        android:id="@+id/undo"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="center"
+        android:src="@drawable/undo"
+        android:layout_marginEnd="6dp"/>
+
+    <ImageView
+        android:id="@+id/redo"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="center"
+        android:src="@drawable/redo"
+        android:layout_marginEnd="6dp"/>
+
+    <ImageView
+        android:id="@+id/clear"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="center"
+        android:src="@drawable/trashcan"
+        android:layout_marginEnd="6dp"/>
+
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_close_deep_blue"
+        android:layout_marginEnd="6dp"/>
+</LinearLayout>
