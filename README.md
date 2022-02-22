@@ -20,6 +20,6 @@ Step 2. Add the dependency
 
 ```groovy
 dependencies {
-    implementation 'com.github.wanghangyu14:ArcGISDevUtils:0.1.6'
+    implementation 'com.github.wanghangyu14:ArcGISDevUtils:latest-release-version'
 }
 ```
