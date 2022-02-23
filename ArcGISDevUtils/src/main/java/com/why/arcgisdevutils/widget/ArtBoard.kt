@@ -56,30 +56,34 @@ class ArtBoard @JvmOverloads constructor(
     }
 
     fun bind(mapView: MapView) {
-        mMapView = mapView
-        mMapView?.graphicsOverlays?.add(graphicOverlay)
-        initListener()
-        onBind?.invoke(this)
+        if(!isBind()){
+            mMapView = mapView
+            mMapView?.graphicsOverlays?.add(graphicOverlay)
+            initListener()
+            onBind?.invoke(this)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {
-        mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
-        graphicOverlay.graphics.clear()
-        mMapView?.graphicsOverlays?.remove(graphicOverlay)
-        points.clear()
-        lines.clear()
-        tmp.clear()
-        selectedColor = resources.getColor(R.color.red, context.theme)
-        mMapView = null
-        pointers = 0
-        lineWidth = 3f
-        lineSymbol = SimpleLineSymbol(
-            SimpleLineSymbol.Style.SOLID, selectedColor,
-            lineWidth
-        )
-        colorIndicator.setBackgroundResource(R.color.red)
-        onUnbind?.invoke(this)
+        if(isBind()){
+            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            graphicOverlay.graphics.clear()
+            mMapView?.graphicsOverlays?.remove(graphicOverlay)
+            points.clear()
+            lines.clear()
+            tmp.clear()
+            selectedColor = resources.getColor(R.color.red, context.theme)
+            mMapView = null
+            pointers = 0
+            lineWidth = 3f
+            lineSymbol = SimpleLineSymbol(
+                SimpleLineSymbol.Style.SOLID, selectedColor,
+                lineWidth
+            )
+            colorIndicator.setBackgroundResource(R.color.red)
+            onUnbind?.invoke(this)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
