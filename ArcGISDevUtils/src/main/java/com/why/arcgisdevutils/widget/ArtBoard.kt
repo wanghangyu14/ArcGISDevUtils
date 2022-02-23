@@ -82,6 +82,7 @@ class ArtBoard @JvmOverloads constructor(
                 lineWidth
             )
             colorIndicator.setBackgroundResource(R.color.red)
+            small.isChecked = true
             onUnbind?.invoke(this)
         }
     }
