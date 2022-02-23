@@ -78,6 +78,7 @@ class ArtBoard @JvmOverloads constructor(
             SimpleLineSymbol.Style.SOLID, selectedColor,
             lineWidth
         )
+        colorIndicator.setBackgroundResource(R.color.red)
         onUnbind?.invoke(this)
     }
 
