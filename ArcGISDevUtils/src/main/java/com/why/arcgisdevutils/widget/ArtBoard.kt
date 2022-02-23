@@ -42,6 +42,59 @@ class ArtBoard @JvmOverloads constructor(
     private var pointers = 0
     private var onUnbind: ((view: ArtBoard) -> Unit)? = null
     private var onBind: ((view: ArtBoard) -> Unit)? = null
+    private val mapListener by lazy {
+        object : DefaultMapViewOnTouchListener(context, mMapView) {
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(view: View, event: MotionEvent): Boolean {
+                val point = android.graphics.Point(event.x.roundToInt(), event.y.roundToInt())
+                when (event.action and MotionEvent.ACTION_MASK) {
+                    MotionEvent.ACTION_DOWN -> {
+                        pointers = 1
+                        points.add(mMapView.screenToLocation(point))
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        pointers = 0
+                        points.add(mMapView.screenToLocation(point))
+                        lines.add(
+                            generateLine(
+                                lineWidth,
+                                selectedColor,
+                                points.toList()
+                            )
+                        )
+                        points.clear()
+                    }
+                    MotionEvent.ACTION_POINTER_DOWN -> {
+                        pointers += 1
+                    }
+                    MotionEvent.ACTION_POINTER_UP -> {
+                        pointers -= 1
+                        lines.add(
+                            generateLine(
+                                lineWidth,
+                                selectedColor,
+                                points.toList()
+                            )
+                        )
+                        points.clear()
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (pointers == 1) {
+                            points.add(mMapView.screenToLocation(point))
+                            drawLine(
+                                generateLine(
+                                    lineWidth,
+                                    selectedColor,
+                                    points.toList()
+                                )
+                            )
+                        }
+                    }
+                }
+                return true
+            }
+        }
+    }
 
     class Line(
         val width: Float,
@@ -67,7 +120,9 @@ class ArtBoard @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     fun unbind() {
         if(isBind()){
-            mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            if (mMapView?.onTouchListener == mapListener) {
+                mMapView?.onTouchListener = DefaultMapViewOnTouchListener(context, mMapView)
+            }
             graphicOverlay.graphics.clear()
             mMapView?.graphicsOverlays?.remove(graphicOverlay)
             points.clear()
@@ -87,7 +142,6 @@ class ArtBoard @JvmOverloads constructor(
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun initListener() {
         colorIndicator.setOnClickListener {
             ColorPickerDialog()
@@ -142,56 +196,7 @@ class ArtBoard @JvmOverloads constructor(
             unbind()
         }
 
-        mMapView?.onTouchListener = object : DefaultMapViewOnTouchListener(context, mMapView) {
-            override fun onTouch(view: View, event: MotionEvent): Boolean {
-                val point = android.graphics.Point(event.x.roundToInt(), event.y.roundToInt())
-                when (event.action and MotionEvent.ACTION_MASK) {
-                    MotionEvent.ACTION_DOWN -> {
-                        pointers = 1
-                        points.add(mMapView.screenToLocation(point))
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        pointers = 0
-                        points.add(mMapView.screenToLocation(point))
-                        lines.add(
-                            generateLine(
-                                lineWidth,
-                                selectedColor,
-                                points.toList()
-                            )
-                        )
-                        points.clear()
-                    }
-                    MotionEvent.ACTION_POINTER_DOWN -> {
-                        pointers += 1
-                    }
-                    MotionEvent.ACTION_POINTER_UP -> {
-                        pointers -= 1
-                        lines.add(
-                            generateLine(
-                                lineWidth,
-                                selectedColor,
-                                points.toList()
-                            )
-                        )
-                        points.clear()
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        if (pointers == 1) {
-                            points.add(mMapView.screenToLocation(point))
-                            drawLine(
-                                generateLine(
-                                    lineWidth,
-                                    selectedColor,
-                                    points.toList()
-                                )
-                            )
-                        }
-                    }
-                }
-                return true
-            }
-        }
+        mMapView?.onTouchListener = mapListener
     }
 
     private fun drawLine(line: Line) {
