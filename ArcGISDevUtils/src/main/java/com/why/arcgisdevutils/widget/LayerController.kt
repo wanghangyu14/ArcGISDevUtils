@@ -79,6 +79,8 @@ class LayerController @JvmOverloads constructor(
         adapter.setLayers(list)
     }
 
+    fun getLayers() = adapter.getLayers()
+
 
     fun setOnCheckListener(listener: (option: LayerOption) -> Unit) {
         onCheck = listener
