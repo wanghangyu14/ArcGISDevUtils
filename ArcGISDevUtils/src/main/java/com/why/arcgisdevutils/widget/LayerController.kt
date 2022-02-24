@@ -29,10 +29,14 @@ class LayerController @JvmOverloads constructor(
             seekbarThumbDrawable,
             seekbarProgressDrawable
         ) { option: LayerOption ->
-            if (option.isSelected) {
-                mMapView?.map?.operationalLayers?.addAll(option.layers)
-            } else {
-                mMapView?.map?.operationalLayers?.removeAll(option.layers)
+            mMapView?.let { mapview->
+                val operationLayer = mapview.map.operationalLayers
+                operationLayer.clear()
+                if (option.isSelected) {
+                    operationLayer.addAll(option.layers)
+                } else {
+                    operationLayer.removeAll(option.layers)
+                }
             }
             onCheck?.invoke(option)
         }
