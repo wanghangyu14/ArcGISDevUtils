@@ -31,10 +31,10 @@ class LayerController @JvmOverloads constructor(
         ) { option: LayerOption ->
             mMapView?.let { mapview->
                 val operationLayer = mapview.map.operationalLayers
-                operationLayer.clear()
-                if (option.isSelected) {
+                if (option.isSelected&&!operationLayer.containsAll(option.layers)) {
                     operationLayer.addAll(option.layers)
-                } else {
+                }
+                if(!option.isSelected&&operationLayer.containsAll(option.layers)) {
                     operationLayer.removeAll(option.layers)
                 }
             }
