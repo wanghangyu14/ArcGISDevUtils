@@ -56,21 +56,23 @@ class LayerController @JvmOverloads constructor(
 
 
     fun bind(mapView: MapView) {
-        mMapView = mapView
-        if(showTitle){
-            title.text = catalogTitle
-        }else{
-            spinner.isVisible = false
-        }
-        if(collapsable){
-            spinner.setOnClickListener {
-                layerList.isVisible = !layerList.isVisible
+        if(!isBind()){
+            mMapView = mapView
+            if(showTitle){
+                title.text = catalogTitle
+            }else{
+                spinner.isVisible = false
             }
-            if(isCollapsed){
-                layerList.isVisible = false
+            if(collapsable){
+                spinner.setOnClickListener {
+                    layerList.isVisible = !layerList.isVisible
+                }
+                if(isCollapsed){
+                    layerList.isVisible = false
+                }
             }
+            layerList.adapter = adapter
         }
-        layerList.adapter = adapter
     }
 
     fun setLayers(list: List<LayerOption>) {
@@ -93,4 +95,6 @@ class LayerController @JvmOverloads constructor(
         }
         return list
     }
+
+    fun isBind() = mMapView!=null
 }
