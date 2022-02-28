@@ -36,13 +36,13 @@ class MapScale @JvmOverloads constructor(
     private var scaleColor = Color.BLACK
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsMapScale)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MapScale)
         fontSize =
-            typedArray.getDimensionPixelSize(R.styleable.UtilsMapScale_font_size, 8.dp2px(context))
+            typedArray.getDimensionPixelSize(R.styleable.MapScale_font_size, 8.dp2px(context))
                 .toFloat()
-        scale = typedArray.getInt(R.styleable.UtilsMapScale_scale, 100)
-        textColor = typedArray.getColor(R.styleable.UtilsMapScale_map_scale_text_color, textColor)
-        scaleColor = typedArray.getColor(R.styleable.UtilsMapScale_scale_color, scaleColor)
+        scale = typedArray.getInt(R.styleable.MapScale_map_scale, 100)
+        textColor = typedArray.getColor(R.styleable.MapScale_map_scale_text_color, textColor)
+        scaleColor = typedArray.getColor(R.styleable.MapScale_scale_color, scaleColor)
         calculateWidth()
         paint.textSize = fontSize
         paint.color = textColor

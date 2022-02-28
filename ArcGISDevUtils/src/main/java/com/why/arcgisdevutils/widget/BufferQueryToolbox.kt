@@ -74,9 +74,9 @@ class BufferQueryToolbox @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.buffer_query_toolbox, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsBufferQueryToolbox)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BufferQueryToolbox)
         spinnerPosition =
-            typedArray.getInt(R.styleable.UtilsBufferQueryToolbox_buffer_spinner_position, 0)
+            typedArray.getInt(R.styleable.BufferQueryToolbox_buffer_spinner_position, 0)
         typedArray.recycle()
     }
 

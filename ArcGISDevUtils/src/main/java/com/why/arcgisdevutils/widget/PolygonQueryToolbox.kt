@@ -57,9 +57,9 @@ class PolygonQueryToolbox @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.polygon_query_toolbox, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsPolygonQueryToolbox)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PolygonQueryToolbox)
         iconColor = typedArray.getColor(
-            R.styleable.UtilsPolygonQueryToolbox_polygon_query_toolbox_icon_color,
+            R.styleable.PolygonQueryToolbox_polygon_query_toolbox_icon_color,
             iconColor
         )
         typedArray.recycle()
