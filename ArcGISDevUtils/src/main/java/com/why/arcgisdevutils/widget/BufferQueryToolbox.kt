@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.LinearLayout
-import androidx.core.view.isVisible
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener
@@ -75,9 +74,9 @@ class BufferQueryToolbox @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.buffer_query_toolbox, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BufferQueryToolbox)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsBufferQueryToolbox)
         spinnerPosition =
-            typedArray.getInt(R.styleable.BufferQueryToolbox_buffer_spinner_position, 0)
+            typedArray.getInt(R.styleable.UtilsBufferQueryToolbox_buffer_spinner_position, 0)
         typedArray.recycle()
     }
 

@@ -43,17 +43,17 @@ class LayerController @JvmOverloads constructor(
     }
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.LayerController)
-        catalogTitle = typedArray.getString(R.styleable.LayerController_title) ?: ""
-        collapsable = typedArray.getBoolean(R.styleable.LayerController_collapsable,true)
-        isCollapsed = typedArray.getBoolean(R.styleable.LayerController_isCollapsed,false)
-        showTitle = typedArray.getBoolean(R.styleable.LayerController_showTitle,true)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsLayerController)
+        catalogTitle = typedArray.getString(R.styleable.UtilsLayerController_title) ?: ""
+        collapsable = typedArray.getBoolean(R.styleable.UtilsLayerController_collapsable,true)
+        isCollapsed = typedArray.getBoolean(R.styleable.UtilsLayerController_isCollapsed,false)
+        showTitle = typedArray.getBoolean(R.styleable.UtilsLayerController_showTitle,true)
         checkboxDrawable =
-            typedArray.getResourceId(R.styleable.LayerController_checkbox_drawable,0)
+            typedArray.getResourceId(R.styleable.UtilsLayerController_checkbox_drawable,0)
         seekbarThumbDrawable =
-            typedArray.getResourceId(R.styleable.LayerController_seekbar_thumb_drawable,0)
+            typedArray.getResourceId(R.styleable.UtilsLayerController_seekbar_thumb_drawable,0)
         seekbarProgressDrawable =
-            typedArray.getResourceId(R.styleable.LayerController_seekbar_progress_drawable,0)
+            typedArray.getResourceId(R.styleable.UtilsLayerController_seekbar_progress_drawable,0)
         LayoutInflater.from(context).inflate(R.layout.layer_controller, this, true)
         typedArray.recycle()
     }

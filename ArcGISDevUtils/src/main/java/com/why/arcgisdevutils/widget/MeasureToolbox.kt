@@ -95,14 +95,14 @@ class MeasureToolbox @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.measure_toolbox, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MeasureToolbox)
-        mode = typedArray.getInt(R.styleable.MeasureToolbox_mode, 0)
-        spinnerPosition = typedArray.getInt(R.styleable.MeasureToolbox_measure_spinner_position, 0)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsMeasureToolbox)
+        mode = typedArray.getInt(R.styleable.UtilsMeasureToolbox_mode, 0)
+        spinnerPosition = typedArray.getInt(R.styleable.UtilsMeasureToolbox_measure_spinner_position, 0)
         textColor =
-            typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_text_color, textColor)
+            typedArray.getColor(R.styleable.UtilsMeasureToolbox_measure_toolbox_text_color, textColor)
         iconColor =
-            typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_icon_color, iconColor)
-        frontSightColor = typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_front_sight_color,frontSightColor)
+            typedArray.getColor(R.styleable.UtilsMeasureToolbox_measure_toolbox_icon_color, iconColor)
+        frontSightColor = typedArray.getColor(R.styleable.UtilsMeasureToolbox_measure_toolbox_front_sight_color,frontSightColor)
         typedArray.recycle()
         initView()
         setColor()

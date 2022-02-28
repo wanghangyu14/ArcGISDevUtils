@@ -22,10 +22,10 @@ class MapController @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.map_controller, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MapController)
-        hasZoom = typedArray.getBoolean(R.styleable.MapController_magnification, true)
-        magnification = typedArray.getInt(R.styleable.MapController_magnification,2)
-        iconColor = typedArray.getColor(R.styleable.MapController_map_controller_icon_color,iconColor)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsMapController)
+        hasZoom = typedArray.getBoolean(R.styleable.UtilsMapController_magnification, true)
+        magnification = typedArray.getInt(R.styleable.UtilsMapController_magnification,2)
+        iconColor = typedArray.getColor(R.styleable.UtilsMapController_map_controller_icon_color,iconColor)
         typedArray.recycle()
         zoom.isVisible = hasZoom
         setColor()

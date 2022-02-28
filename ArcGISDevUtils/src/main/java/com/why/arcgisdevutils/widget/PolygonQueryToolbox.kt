@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.LinearLayout
-import androidx.core.view.isVisible
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.PointCollection
@@ -58,9 +57,9 @@ class PolygonQueryToolbox @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.polygon_query_toolbox, this, true)
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PolygonQueryToolbox)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.UtilsPolygonQueryToolbox)
         iconColor = typedArray.getColor(
-            R.styleable.PolygonQueryToolbox_polygon_query_toolbox_icon_color,
+            R.styleable.UtilsPolygonQueryToolbox_polygon_query_toolbox_icon_color,
             iconColor
         )
         typedArray.recycle()

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="MapScale">
+    <declare-styleable name="UtilsMapScale">
         <attr name="font_size" format="dimension" />
         <attr name="scale" format="integer" />
         <attr name="map_scale_text_color" format="color"/>
         <attr name="scale_color" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="MeasureToolbox">
+    <declare-styleable name="UtilsMeasureToolbox">
         <attr name="mode" format="enum">
             <enum name="normal" value="0" />
             <enum name="precise" value="1" />
@@ -21,13 +21,13 @@
         <attr name="measure_toolbox_front_sight_color" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="MapController">
+    <declare-styleable name="UtilsMapController">
         <attr name="hasZoom" format="boolean" />
         <attr name="magnification" format="integer" />
         <attr name="map_controller_icon_color" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="BufferQueryToolbox">
+    <declare-styleable name="UtilsBufferQueryToolbox">
         <attr name="buffer_spinner_position" format="enum">
             <enum name="top" value="0" />
             <enum name="bottom" value="1" />
@@ -36,11 +36,11 @@
         <attr name="buffer_query_toolbox_text_color" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="PolygonQueryToolbox">
+    <declare-styleable name="UtilsPolygonQueryToolbox">
         <attr name="polygon_query_toolbox_icon_color" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="LayerController">
+    <declare-styleable name="UtilsLayerController">
         <attr name="title"  format="string"/>
         <attr name="collapsable" format="boolean"/>
         <attr name="isCollapsed" format="boolean"/>
