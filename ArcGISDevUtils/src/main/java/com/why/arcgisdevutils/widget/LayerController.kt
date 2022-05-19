@@ -1,5 +1,6 @@
 package com.why.arcgisdevutils.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -92,6 +93,15 @@ class LayerController @JvmOverloads constructor(
 
     fun setOnSeekBarChangeListener(listener: (option: LayerOption, progress: Int, fromUser: Boolean) -> Unit) {
         adapter.setOnSeekBarChangeListener(listener)
+    }
+
+    fun setTitle(title:String){
+        catalogTitle = title
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun refresh(){
+        adapter.notifyDataSetChanged()
     }
 
     fun getSelectedLayer():List<LayerOption>{
