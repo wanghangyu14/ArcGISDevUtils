@@ -95,8 +95,9 @@ class LayerController @JvmOverloads constructor(
         adapter.setOnSeekBarChangeListener(listener)
     }
 
-    fun setTitle(title:String){
-        catalogTitle = title
+    fun setTitle(newTitle:String){
+        catalogTitle = newTitle
+        title.text = newTitle
     }
 
     @SuppressLint("NotifyDataSetChanged")
