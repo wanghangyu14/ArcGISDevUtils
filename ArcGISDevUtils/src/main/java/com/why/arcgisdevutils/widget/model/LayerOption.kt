@@ -11,5 +11,6 @@ data class LayerOption(
     val canQuery:Boolean = false,
     val category:String,
     val indices:List<Int>,
-    val fieldMap:List<List<String>>
+    val fieldMap:List<List<String>>,
+    val legend:String
 )
