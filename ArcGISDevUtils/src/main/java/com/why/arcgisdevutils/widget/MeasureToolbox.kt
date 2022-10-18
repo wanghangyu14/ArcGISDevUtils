@@ -37,6 +37,7 @@ class MeasureToolbox @JvmOverloads constructor(
     private var mMapView: MapView? = null
     private val graphicOverlay = GraphicsOverlay()
     private var isLen = true
+    private var canMapRotate = false
     private val points = mutableListOf<Point>()
     private val temp = mutableListOf<Point>()
     private val dotSymbol = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 8F)
@@ -85,7 +86,16 @@ class MeasureToolbox @JvmOverloads constructor(
                 }
                 return super.onSingleTapConfirmed(e)
             }
+
+            override fun onRotate(event: MotionEvent?, rotationAngle: Double): Boolean {
+                return if(canMapRotate){
+                    super.onRotate(event, rotationAngle)
+                }else{
+                    false
+                }
+            }
         }
+
     }
     private var onUnbind: ((view: MeasureToolbox) -> Unit)? = null
     private var onBind: ((view: MeasureToolbox) -> Unit)? = null
@@ -103,6 +113,7 @@ class MeasureToolbox @JvmOverloads constructor(
         iconColor =
             typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_icon_color, iconColor)
         frontSightColor = typedArray.getColor(R.styleable.MeasureToolbox_measure_toolbox_front_sight_color,frontSightColor)
+        canMapRotate = typedArray.getBoolean(R.styleable.MeasureToolbox_measure_toolbox_can_map_rotate,false)
         typedArray.recycle()
         initView()
         setColor()

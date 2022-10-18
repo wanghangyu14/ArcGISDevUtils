@@ -19,6 +19,7 @@
         <attr name="measure_toolbox_icon_color" format="color"/>
         <attr name="measure_toolbox_text_color" format="color"/>
         <attr name="measure_toolbox_front_sight_color" format="color"/>
+        <attr name="measure_toolbox_can_map_rotate" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="MapController">
@@ -34,10 +35,12 @@
         </attr>
         <attr name="buffer_query_toolbox_icon_color" format="color"/>
         <attr name="buffer_query_toolbox_text_color" format="color"/>
+        <attr name="buffer_query_toolbox_can_map_rotate" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="PolygonQueryToolbox">
         <attr name="polygon_query_toolbox_icon_color" format="color"/>
+        <attr name="polygon_query_toolbox_can_map_rotate" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="LayerController">

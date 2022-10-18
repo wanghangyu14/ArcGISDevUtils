@@ -27,6 +27,7 @@ class BufferQueryToolbox @JvmOverloads constructor(
 ) : LinearLayout(context, attrs) {
     private var mMapView: MapView? = null
     private var spinnerPosition = 0
+    private var canMapRotate = false
     private var unit: LinearUnitId = LinearUnitId.METERS
     private val graphicsOverlay = GraphicsOverlay()
     private val dotSymbol = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 8F)
@@ -69,6 +70,14 @@ class BufferQueryToolbox @JvmOverloads constructor(
                 onQueryResult?.invoke(bufferGeometry)
                 return super.onSingleTapConfirmed(e)
             }
+
+            override fun onRotate(event: MotionEvent?, rotationAngle: Double): Boolean {
+                return if(canMapRotate){
+                    super.onRotate(event, rotationAngle)
+                }else{
+                    false
+                }
+            }
         }
     }
 
@@ -77,6 +86,7 @@ class BufferQueryToolbox @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BufferQueryToolbox)
         spinnerPosition =
             typedArray.getInt(R.styleable.BufferQueryToolbox_buffer_spinner_position, 0)
+        canMapRotate = typedArray.getBoolean(R.styleable.BufferQueryToolbox_buffer_query_toolbox_can_map_rotate,false)
         typedArray.recycle()
     }
 

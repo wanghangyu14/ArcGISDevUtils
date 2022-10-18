@@ -28,6 +28,7 @@ class PolygonQueryToolbox @JvmOverloads constructor(
 ) : LinearLayout(context, attrs) {
     private var mMapView: MapView? = null
     private val graphicsOverlay = GraphicsOverlay()
+    private var canMapRotate = false
     private val points = mutableListOf<Point>()
     private val temp = mutableListOf<Point>()
     private val lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.BLACK, 2F)
@@ -52,6 +53,13 @@ class PolygonQueryToolbox @JvmOverloads constructor(
                 drawPolygon()
                 return super.onSingleTapConfirmed(e)
             }
+            override fun onRotate(event: MotionEvent?, rotationAngle: Double): Boolean {
+                return if(canMapRotate){
+                    super.onRotate(event, rotationAngle)
+                }else{
+                    false
+                }
+            }
         }
     }
 
@@ -62,6 +70,7 @@ class PolygonQueryToolbox @JvmOverloads constructor(
             R.styleable.PolygonQueryToolbox_polygon_query_toolbox_icon_color,
             iconColor
         )
+        canMapRotate = typedArray.getBoolean(R.styleable.PolygonQueryToolbox_polygon_query_toolbox_can_map_rotate,false)
         typedArray.recycle()
         setColor()
     }
