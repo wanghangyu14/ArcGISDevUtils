@@ -3,6 +3,6 @@
     <string name="line_width">画笔线宽：</string>
     <string name="drag">拖动</string>
     <string name="opacity">透明度</string>
-    <string name="layer_setting">图层设置</string>
+    <string name="layer_sort">图层顺序</string>
     <string name="layer_name">图层名</string>
 </resources>

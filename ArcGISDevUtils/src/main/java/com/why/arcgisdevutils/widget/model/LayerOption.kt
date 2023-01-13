@@ -9,8 +9,8 @@ data class LayerOption(
     var opacity: Int = 100,
     var isSelected: Boolean = false,
     val canQuery:Boolean = false,
-    val category:String,
-    val indices:List<Int>,
-    val fieldMap:List<List<String>>,
-    val legend:String
+    val category:String="",
+    val indices:List<Int> = listOf(),
+    val fieldMap:List<List<String>> = listOf(),
+    val legend:String=""
 )

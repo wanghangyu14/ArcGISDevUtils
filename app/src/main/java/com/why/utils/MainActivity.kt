@@ -3,11 +3,14 @@ package com.why.utils
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import com.esri.arcgisruntime.data.ServiceFeatureTable
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.layers.ArcGISTiledLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
@@ -16,14 +19,14 @@ import com.why.arcgisdevutils.gis.Point
 import com.why.arcgisdevutils.gis.spatialQuery
 import com.why.arcgisdevutils.utils.showToast
 import com.why.arcgisdevutils.widget.NavigateDialog
-import com.why.arcgisdevutils.widget.model.LayerOption
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.right_navigation_view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel:MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,21 +41,6 @@ class MainActivity : AppCompatActivity() {
             mapScale.setScale(mapview.mapScale.toInt() / 100)
         }
         mapController.bind(mapview)
-
-        layerController.bind(mapview)
-        layerController.setLayers(getLayerOptions())
-        layerController.setOnCheckListener { option ->
-            if(option.isSelected){
-                "${option.name}被选中".showToast(this)
-            }else{
-                "${option.name}取消选中".showToast(this)
-            }
-        }
-        layerController.setOnSeekBarChangeListener { option, progress,fromUser ->
-            if(fromUser){
-                "${option.name}当前透明度为$progress".showToast(this)
-            }
-        }
 
         measureToolbox.setOnUnbindListener { view -> view.isVisible = false }
 
@@ -81,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 spatialQuery(geometry, map)
             }
         }
-
+        replaceFragment(R.id.container,LayerControllerFragment(mapview))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -112,11 +100,16 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.layer -> {
                 drawerLayout.openDrawer(GravityCompat.END)
+                replaceFragment(R.id.container,LayerControllerFragment(mapview))
             }
             R.id.navi -> {
                 NavigateDialog(this)
                     .setDestination(Point(31.78507, 119.973146))
                     .show()
+            }
+            R.id.sortLayer->{
+                drawerLayout.openDrawer(GravityCompat.END)
+                replaceFragment(R.id.container,LayerSortFragment(mapview))
             }
         }
         return true
@@ -154,48 +147,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getLayerOptions() = listOf(
-        LayerOption(
-            "高架路网",
-            listOf(
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/27")),
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/28"))
-            ),
-            isSelected = true
-        ),
-        LayerOption(
-            "高架下道路路网",
-            listOf(
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/29")),
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/30"))
-            )
-        ),
-        LayerOption(
-            "匝道",
-            listOf(
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/23")),
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/24"))
-            ),
-            isSelected = true
-        ),
-        LayerOption(
-            "互通",
-            listOf(
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/25")),
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/26"))
-            )
-        ),
-        LayerOption(
-            "路线坐标",
-            listOf(
-                FeatureLayer(ServiceFeatureTable("http://58.216.48.11:6080/arcgis/rest/services/CZ_Vector/MapServer/22"))
-            )
-        ),
-        LayerOption(
-            "道路绿化",
-            listOf(
-                FeatureLayer(ServiceFeatureTable("http://www.czch.com.cn:6080/arcgis/rest/services/SZGJ/MapServer/37"))
-            )
-        )
-    )
+    private fun replaceFragment(@IdRes containerID: Int, fragment: Fragment) {
+        supportFragmentManager.commit {
+            replace(containerID, fragment)
+        }
+    }
 }

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="220dp"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="end"
     android:background="#fff"
     android:clickable="true"
@@ -11,11 +10,9 @@
     android:orientation="vertical"
     android:scrollbars="none">
 
-    <com.why.arcgisdevutils.widget.LayerController
-        android:id="@+id/layerController"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="高架道路"
-        app:checkbox_drawable="@drawable/checkbox_drawable"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
