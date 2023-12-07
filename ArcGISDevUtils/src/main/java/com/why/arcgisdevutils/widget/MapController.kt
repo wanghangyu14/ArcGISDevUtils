@@ -18,7 +18,7 @@ class MapController @JvmOverloads constructor(
     private var hasZoom = true
     private var magnification = 2
     private var iconColor = Color.BLACK
-    private var onRelocate :((point:Point)->Unit)? = null
+    private var onRelocate :(()->Unit)? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.map_controller, this, true)
@@ -37,13 +37,20 @@ class MapController @JvmOverloads constructor(
         zoomOut.imageTintList = ColorStateList.valueOf(iconColor)
     }
 
+    fun setOnRelocate( mOnRelocate:(()->Unit)){
+        onRelocate = mOnRelocate
+    }
+
     fun bind(mapView: MapView) {
 
         relocation.setOnClickListener {
             val locationDisplay = mapView.locationDisplay
             val location = locationDisplay.mapLocation
-            mapView.setViewpointCenterAsync(location)
-            onRelocate?.invoke(locationDisplay.location.position)
+            if(onRelocate==null){
+                mapView.setViewpointCenterAsync(location)
+            }else{
+                onRelocate?.invoke()
+            }
         }
 
         if (hasZoom) {

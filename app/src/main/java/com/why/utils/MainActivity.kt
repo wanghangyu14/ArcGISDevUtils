@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity() {
         }
         mapController.bind(mapview)
 
+        mapController.setOnRelocate {
+            "onRelocate".showToast(this)
+        }
+
         measureToolbox.setOnUnbindListener { view -> view.isVisible = false }
 
         bufferQueryToolbox.setOnUnbindListener { view -> view.isVisible = false }
